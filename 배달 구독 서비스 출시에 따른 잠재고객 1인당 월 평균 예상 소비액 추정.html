@@ -46,6 +46,14 @@
             display: inline-block;
         }
 
+        /* Mint Highlighter Effect (Highlighter under text layer) */
+        .highlighter-mint {
+            background: linear-gradient(to top, rgba(46, 196, 182, 0.25) 45%, transparent 45%);
+            padding: 0 0.2rem;
+            border-radius: 2px;
+            display: inline;
+        }
+
         :root {
             /* Palette: Premium Pink & Rose Gold */
             --pink-50: #FFF5F6;
@@ -1687,17 +1695,17 @@
             container.innerHTML = `
                 <div style="margin-bottom: 0.8rem;">
                     <strong>[추정 환경 개요]</strong><br>
-                    지정된 표집 틀 내 참값 모평균(&mu;)은 <strong>${Math.round(truePopMean).toLocaleString()}원</strong>이며, 현재 추출된 표본평균(x̄)은 <strong>${Math.round(currentSampleMean).toLocaleString()}원</strong>입니다. 
-                    추출 오차는 <strong>${Math.round(error).toLocaleString()}원</strong>으로, 오차율은 <strong>${errorRate.toFixed(2)}%</strong>를 가리킵니다.
+                    지정된 표집 틀 내 참값 모평균(&mu;)은 <span class="highlighter-mint">${Math.round(truePopMean).toLocaleString()}원</span>이며, 현재 추출된 표본평균(x̄)은 <span class="highlighter-mint">${Math.round(currentSampleMean).toLocaleString()}원</span>입니다. 
+                    추출 오차는 <span class="highlighter-mint">${Math.round(error).toLocaleString()}원</span>으로, 오차율은 <span class="highlighter-mint">${errorRate.toFixed(2)}%</span>를 가리킵니다.
                 </div>
                 <div style="margin-bottom: 0.8rem;">
                     <strong>[신뢰구간 추정 결과]</strong><br>
-                    95% 신뢰구간은 <strong>[${Math.round(ci95Lower).toLocaleString()}원 ~ ${Math.round(ci95Upper).toLocaleString()}원]</strong> 범위로 정형화되었으며, 본 추출 구간 내에 모집단 참값(&mu;)이 <strong>${contains95 ? '<span style="color:var(--success); font-weight:bold;">포함되어 추정에 성공</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않아 추정에 실패</span>'}</strong>했습니다.<br>
-                    99% 신뢰구간은 <strong>[${Math.round(ci99Lower).toLocaleString()}원 ~ ${Math.round(ci99Upper).toLocaleString()}원]</strong> 범위이며, 참값(&mu;)이 <strong>${contains99 ? '<span style="color:var(--success); font-weight:bold;">포함됨</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않음</span>'}</strong>으로 나타났습니다.
+                    95% 신뢰구간은 <span class="highlighter-mint">[${Math.round(ci95Lower).toLocaleString()}원 ~ ${Math.round(ci95Upper).toLocaleString()}원]</span> 범위로 정형화되었으며, 본 추출 구간 내에 모집단 참값(&mu;)이 <strong>${contains95 ? '<span style="color:var(--success); font-weight:bold;">포함되어 추정에 성공</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않아 추정에 실패</span>'}</strong>했습니다.<br>
+                    99% 신뢰구간은 <span class="highlighter-mint">[${Math.round(ci99Lower).toLocaleString()}원 ~ ${Math.round(ci99Upper).toLocaleString()}원]</span> 범위이며, 참값(&mu;)이 <strong>${contains99 ? '<span style="color:var(--success); font-weight:bold;">포함됨</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않음</span>'}</strong>으로 나타났습니다.
                 </div>
                 <div>
                     <strong>[통계적 인사이트 분석]</strong><br>
-                    시뮬레이션 누적 <strong>${historyData.totalRuns}회</strong> 기준으로 95% 신뢰구간의 실제 참값 포함 확률은 <strong>${rate95}%</strong>, 99% 신뢰구간의 실제 포함 비율은 <strong>${rate99}%</strong>입니다. ${insightText}
+                    시뮬레이션 누적 <span class="highlighter-mint">${historyData.totalRuns}회</span> 기준으로 95% 신뢰구간의 실제 참값 포함 확률은 <span class="highlighter-mint">${rate95}%</span>, 99% 신뢰구간의 실제 포함 비율은 <span class="highlighter-mint">${rate99}%</span>입니다. ${insightText}
                 </div>
             `;
         }
