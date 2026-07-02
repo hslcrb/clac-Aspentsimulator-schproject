@@ -1038,9 +1038,57 @@
             color: var(--pink-500);
             display: inline-block;
         }
+
+        /* Intro Splash Screen Styles */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #FFF5F6;
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .splash-content {
+            text-align: center;
+            transform: translateY(-6vh);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .splash-gif {
+            width: 220px;
+            height: 220px;
+            margin-bottom: 2rem;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(255, 62, 108, 0.15);
+        }
+
+        .splash-text {
+            font-family: var(--font-point);
+            font-size: 2.5rem;
+            color: var(--pink-600);
+            letter-spacing: 1px;
+            min-height: 4rem;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Intro Splash Screen -->
+    <div id="splashScreen">
+        <div class="splash-content">
+            <img src="https://cdn.pixabay.com/animation/2026/05/10/12/07/12-07-49-893_512.gif" alt="Design the Data Loading" class="splash-gif">
+            <div id="splashText" class="splash-text"></div>
+        </div>
+    </div>
 
     <!-- Cherry Blossom Overlay Canvas -->
     <canvas id="blossomCanvas" layoutsubtree>
@@ -1057,9 +1105,19 @@
             </div>
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 0.8rem;">
-            <button id="musicToggleBtn" onclick="toggleMusic()" style="font-size: 0.95rem; padding: 0.4rem 0.8rem; margin: 0; width: auto; background: var(--pink-500); border: none; color: white; border-radius: var(--radius-sm); font-weight: bold; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 0.3rem;">
-                <span class="no-select-emoji">🎵</span> 음악 켜기
-            </button>
+            <!-- Dual Music Selector controls -->
+            <div class="music-control-box" style="display: flex; align-items: center; gap: 0.4rem; background: var(--pink-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--pink-200); box-shadow: var(--shadow-sm);">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--pink-700); padding-right: 0.2rem; user-select: none;" class="no-select-emoji">🎵 배경음악:</span>
+                <button id="musicBtnGhibli" onclick="selectMusic('ghibli')" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
+                    🌸 지브리
+                </button>
+                <button id="musicBtnTrot" onclick="selectMusic('trot')" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
+                    🕺 트로트
+                </button>
+                <button onclick="stopMusic()" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: var(--pink-500); color: white; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
+                    🔇 정지
+                </button>
+            </div>
             <span class="tag">모평균의 신뢰구간 추정</span>
             <button class="easter-egg-btn no-select-emoji" onclick="triggerEasterEgg()" title="비밀의 벚꽃 비 내리기">🌸</button>
         </div>
@@ -1371,6 +1429,9 @@
             
             // Draw initial sample
             drawNewSample();
+
+            // Run the Splash Screen typing intro animation
+            runSplashScreen();
         });
 
         // Box-Muller transform for normal distribution
@@ -1851,6 +1912,25 @@
             osc.stop(startTime + duration);
         }
 
+        // --- 트로트 및 댄스풍 배경음악 리소스 정의 ---
+        let musicType = 'ghibli'; // 'ghibli' 또는 'trot'
+
+        // 신나고 익살스러운 트로트 펜타토닉 멜로디 루프 시퀀스 (강남스타일 리듬 구조 차용)
+        const trotMelody = [
+            69, null, 69, 69, 72, null, 72, 72, // 1마디: 쿵짝쿵짝 신나는 도입부
+            74, 74, 76, 74, 72, 69, 72, 74,     // 2마디: 꺾어주는 멜로디
+            76, null, 76, 76, 79, null, 79, 79, // 3마디: 고조되는 비트
+            81, 79, 76, 74, 72, 69, 69, null    // 4마디: 마무리 바운스
+        ];
+
+        const trotChordRoots = [45, 41, 48, 43]; // A2 - F2 - C3 - G2 (트로트 특화 코드 근음)
+        const trotChords = [
+            [57, 60, 64], // Am
+            [53, 57, 60], // F
+            [55, 60, 64], // C
+            [55, 59, 62]  // G
+        ];
+
         // Web Audio API 오디오 스케줄링 전용 타이머 루프
         function musicScheduler() {
             if (!isPlayingMusic) return;
@@ -1858,68 +1938,177 @@
             while (nextNoteTime < audioCtx.currentTime + 0.1) {
                 scheduleMusicStep(currentStep, nextNoteTime);
                 
-                // 300ms 간격으로 비트를 순방향 이동
-                nextNoteTime += 0.3;
+                // 트로트는 빠른 템포(비트 간격 180ms), 지브리는 몽글한 템포(300ms)로 분리 설정한다.
+                const stepIncrement = musicType === 'trot' ? 0.18 : 0.3;
+                nextNoteTime += stepIncrement;
                 currentStep++;
             }
             musicTimer = setTimeout(musicScheduler, 25);
         }
 
-        // 매 단계마다 멜로디와 어쿠스틱 반주 음들을 조합하여 실시간 연주를 생성
+        // 매 단계마다 선택된 음악 모드(지브리 vs 트로트)의 반주 음들과 멜로디를 조합하여 합성
         function scheduleMusicStep(step, time) {
             const chordIdx = Math.floor(step / 8) % 4;
             const stepInChord = step % 8;
             
-            // 1. 코드 마디 첫 박자에 묵직하고 따스한 근음(Base) 연출
-            if (stepInChord === 0) {
-                const bassFreq = 440 * Math.pow(2, (chordRoots[chordIdx] - 69) / 12);
-                playNodeSound(bassFreq, time, 2.2, 'sine', 0.12);
-            }
-            
-            // 2. 부드럽게 반주 화음을 아르페지오로 분산 연주
-            if (stepInChord % 2 === 0) {
-                const noteIdx = (stepInChord / 2) % 3;
-                const midiNote = chords[chordIdx][noteIdx];
-                const arpeggioFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
-                playNodeSound(arpeggioFreq, time, 0.7, 'sine', 0.04);
-            }
-            
-            // 3. 서정적이고 아련한 지브리 스타일 멜로디 전개
-            const melodyIdx = step % melodyNotes.length;
-            const melodyMidi = melodyNotes[melodyIdx];
-            if (melodyMidi !== null) {
-                const melodyFreq = 440 * Math.pow(2, (melodyMidi - 69) / 12);
-                playNodeSound(melodyFreq, time, 0.45, 'triangle', 0.08);
+            if (musicType === 'ghibli') {
+                // 1. 코드 마디 첫 박자에 묵직하고 따스한 근음(Base) 연출
+                if (stepInChord === 0) {
+                    const bassFreq = 440 * Math.pow(2, (chordRoots[chordIdx] - 69) / 12);
+                    playNodeSound(bassFreq, time, 2.2, 'sine', 0.12);
+                }
+                
+                // 2. 부드럽게 반주 화음을 아르페지오로 분산 연주
+                if (stepInChord % 2 === 0) {
+                    const noteIdx = (stepInChord / 2) % 3;
+                    const midiNote = chords[chordIdx][noteIdx];
+                    const arpeggioFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
+                    playNodeSound(arpeggioFreq, time, 0.7, 'sine', 0.04);
+                }
+                
+                // 3. 서정적이고 아련한 지브리 스타일 멜로디 전개
+                const melodyIdx = step % melodyNotes.length;
+                const melodyMidi = melodyNotes[melodyIdx];
+                if (melodyMidi !== null) {
+                    const melodyFreq = 440 * Math.pow(2, (melodyMidi - 69) / 12);
+                    playNodeSound(melodyFreq, time, 0.45, 'triangle', 0.08);
+                }
+            } else {
+                // 신나고 웃긴 트로트/테크노 연주 엔진 (Sawtooth/Square 파형의 강렬한 조합)
+                // 1. 쿵짝쿵짝 4비트 다운비트 톱니파 베이스라인
+                if (stepInChord % 2 === 0) {
+                    const bassMidi = trotChordRoots[chordIdx] + (stepInChord % 4 === 0 ? 0 : 12);
+                    const bassFreq = 440 * Math.pow(2, (bassMidi - 69) / 12);
+                    playNodeSound(bassFreq, time, 0.14, 'sawtooth', 0.12);
+                }
+
+                // 2. 오프비트 신스 스타브 화음 반주 (트로트 특유의 강세 표현)
+                if (stepInChord === 0 || stepInChord === 3 || stepInChord === 5) {
+                    trotChords[chordIdx].forEach(midiNote => {
+                        const stabFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
+                        playNodeSound(stabFreq, time, 0.1, 'square', 0.03);
+                    });
+                }
+
+                // 3. 뽕짝 느낌의 통통 튀는 사각파 멜로디 연주
+                const melodyIdx = step % trotMelody.length;
+                const melodyMidi = trotMelody[melodyIdx];
+                if (melodyMidi !== null) {
+                    const melodyFreq = 440 * Math.pow(2, (melodyMidi - 69) / 12);
+                    playNodeSound(melodyFreq, time, 0.16, 'square', 0.08);
+                }
             }
         }
 
-        // 음악 재생 상태를 반전 제어하는 이벤트 리스너
-        function toggleMusic() {
-            const btn = document.getElementById('musicToggleBtn');
-            if (!isPlayingMusic) {
-                if (!audioCtx) {
-                    initAudio();
-                }
-                audioCtx.resume();
-                isPlayingMusic = true;
-                btn.innerHTML = `<span class="no-select-emoji">🔇</span> 음악 끄기`;
-                btn.classList.add('active');
-                
+        // 음악 종류 선택 활성화 함수
+        function selectMusic(type) {
+            musicType = type;
+            if (!audioCtx) {
+                initAudio();
+            }
+            audioCtx.resume();
+            isPlayingMusic = true;
+
+            // 음악 버튼들의 디자인을 변경하여 활성화 여부 표현
+            const btnGhibli = document.getElementById('musicBtnGhibli');
+            const btnTrot = document.getElementById('musicBtnTrot');
+            if (type === 'ghibli') {
+                btnGhibli.style.background = 'var(--pink-500)';
+                btnGhibli.style.color = 'white';
+                btnTrot.style.background = 'white';
+                btnTrot.style.color = 'var(--pink-600)';
+            } else {
+                btnTrot.style.background = 'var(--pink-500)';
+                btnTrot.style.color = 'white';
+                btnGhibli.style.background = 'white';
+                btnGhibli.style.color = 'var(--pink-600)';
+            }
+
+            if (!musicTimer) {
                 nextNoteTime = audioCtx.currentTime + 0.05;
                 currentStep = 0;
                 musicScheduler();
-            } else {
-                isPlayingMusic = false;
-                btn.innerHTML = `<span class="no-select-emoji">🎵</span> 음악 켜기`;
-                btn.classList.remove('active');
-                if (musicTimer) {
-                    clearTimeout(musicTimer);
-                    musicTimer = null;
-                }
-                if (audioCtx) {
-                    audioCtx.suspend();
+            }
+        }
+
+        // 음악 끄기 함수
+        function stopMusic() {
+            isPlayingMusic = false;
+            const btnGhibli = document.getElementById('musicBtnGhibli');
+            const btnTrot = document.getElementById('musicBtnTrot');
+            btnGhibli.style.background = 'white';
+            btnGhibli.style.color = 'var(--pink-600)';
+            btnTrot.style.background = 'white';
+            btnTrot.style.color = 'var(--pink-600)';
+
+            if (musicTimer) {
+                clearTimeout(musicTimer);
+                musicTimer = null;
+            }
+            if (audioCtx) {
+                audioCtx.suspend();
+            }
+        }
+
+        // 스플래시 화면 타이핑 및 도트 루프 애니메이션 재생 함수
+        function runSplashScreen() {
+            const textElement = document.getElementById('splashText');
+            const splashScreen = document.getElementById('splashScreen');
+            if (!textElement || !splashScreen) return;
+
+            const baseText = "Design the Data";
+            let index = 0;
+
+            // 1단계: "Design the Data" 한 글자씩 타이핑
+            function typeBaseText() {
+                if (index < baseText.length) {
+                    textElement.textContent += baseText[index];
+                    index++;
+                    setTimeout(typeBaseText, 80);
+                } else {
+                    // 2단계: 후미의 ... 가 . .. ... 이렇게 타이핑 되는 루프 2회 빠르게 진행
+                    runDotsAnimation(0);
                 }
             }
+
+            function runDotsAnimation(cycleCount) {
+                if (cycleCount >= 2) return;
+
+                let dotIndex = 0;
+                function cycleStep() {
+                    if (dotIndex === 0) {
+                        textElement.textContent = baseText + ".";
+                        dotIndex = 1;
+                        setTimeout(cycleStep, 150);
+                    } else if (dotIndex === 1) {
+                        textElement.textContent = baseText + "..";
+                        dotIndex = 2;
+                        setTimeout(cycleStep, 150);
+                    } else if (dotIndex === 2) {
+                        textElement.textContent = baseText + "...";
+                        dotIndex = 3;
+                        setTimeout(cycleStep, 150);
+                    } else if (dotIndex === 3) {
+                        textElement.textContent = baseText;
+                        dotIndex = 0;
+                        if (cycleCount === 0) {
+                            setTimeout(() => runDotsAnimation(1), 150);
+                        }
+                    }
+                }
+                cycleStep();
+            }
+
+            // 타이핑 동작 개시
+            typeBaseText();
+
+            // 3단계: 시작 3초 후 페이드인 효과를 주며 대시보드 화면 표출
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 800);
+            }, 3000);
         }
 
         // Chart Initialization
