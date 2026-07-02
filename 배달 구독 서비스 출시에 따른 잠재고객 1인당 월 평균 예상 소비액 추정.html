@@ -1244,6 +1244,28 @@
                         <canvas id="convergenceChart"></canvas>
                     </div>
                 </div>
+
+                <!-- Chart 5: 표집분포 히스토그램 (중심극한정리 CLT 시각화) -->
+                <div class="card">
+                    <h3 class="card-title"><span class="no-select-emoji">🔔</span> 표집분포: 표본평균의 분포 (중심극한정리)</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                        누적 시행에서 얻어진 <b>표본평균들의 히스토그램</b>입니다. 시행이 쌓일수록 이론적 <b>정규분포</b>에 수렴합니다 (CLT).
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="samplingDistChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 6: 표준오차 vs 표본크기 이론 곡선 (σ/√n) -->
+                <div class="card">
+                    <h3 class="card-title"><span class="no-select-emoji">📐</span> 표준오차 vs 표본 크기 (σ/√n 곡선)</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                        n이 커질수록 SE(= σ/√n)가 감소하는 이론 곡선입니다. 현재: <span id="seVsN_label" style="color: var(--pink-600); font-weight: bold;">대기 중</span>
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="seVsNChart"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -1330,11 +1352,13 @@
         let currentSampleMean = 0;
         let currentSampleSD = 0;
 
-        // Chart objects
-        let distributionChart = null;
-        let ciHistoryChart = null;
-        let regionalChart = null;
-        let convergenceChart = null;
+        // 차트 인스턴스 참조: 전역 범위에서 관리하여 drawNewSample() 호출마다 재사용한다.
+        let distributionChart    = null; // Chart 1: 표본 분포 히스토그램 vs 이론 밀도 함수
+        let ciHistoryChart       = null; // Chart 2: 신뢰구간 추정 역사 (최근 30회 부동 막대)
+        let regionalChart        = null; // Chart 3: 연령대별 참값 평균 비교 막대 그래프
+        let convergenceChart     = null; // Chart 4: 대수의 법칙 — 누적 표본평균 수렴도
+        let samplingDistChart    = null; // Chart 5: 표집분포 — CLT 히스토그램 (신규)
+        let seVsNChart           = null; // Chart 6: SE vs n 역제곱근 이론 곡선 (신규)
 
         // Title click counter for Easter egg
         let titleClickCount = 0;
@@ -1646,66 +1670,100 @@
         }
 
         // ============================================================================
-        // 📋 1. 실시간 분석 리포트 & 변수 템플릿 인사이트 도출 시스템
+        // 📋 1. 실시간 분석 리포트 시스템 — 변수 주입 템플릿 기반 인사이트 도출
+        //    모든 통계 수치를 자연어 문장에 자동 삽입하여 "A는 B입니다" 형식의
+        //    구조적 피드백을 제공하고, 학생이 즉각적으로 인사이트를 도출하게 돕는다.
         // ============================================================================
         function updateReport() {
             const container = document.getElementById('dynamicReportContent');
             if (!container) return;
 
-            const selected = regionalData.filter(r => r.checked);
+            // --- 핵심 통계치 계산 ---
+            const selected    = regionalData.filter(r => r.checked);
             const regionNames = selected.map(r => r.name).join(', ');
-            
-            const standardError = currentSampleSD / Math.sqrt(sampleSize);
-            const margin95 = 1.96 * standardError;
-            const ci95Lower = Math.max(0, currentSampleMean - margin95);
-            const ci95Upper = currentSampleMean + margin95;
-            const contains95 = (truePopMean >= ci95Lower && truePopMean <= ci95Upper);
+            const se          = currentSampleSD / Math.sqrt(sampleSize); // 표준오차(SE)
 
-            const margin99 = 2.576 * standardError;
-            const ci99Lower = Math.max(0, currentSampleMean - margin99);
-            const ci99Upper = currentSampleMean + margin99;
-            const contains99 = (truePopMean >= ci99Lower && truePopMean <= ci99Upper);
+            const m95    = 1.96 * se;
+            const ci95Lo = Math.max(0, currentSampleMean - m95);
+            const ci95Hi = currentSampleMean + m95;
+            const ok95   = truePopMean >= ci95Lo && truePopMean <= ci95Hi;
 
-            const error = Math.abs(truePopMean - currentSampleMean);
-            const errorRate = (error / truePopMean) * 100;
+            const m99    = 2.576 * se;
+            const ci99Lo = Math.max(0, currentSampleMean - m99);
+            const ci99Hi = currentSampleMean + m99;
+            const ok99   = truePopMean >= ci99Lo && truePopMean <= ci99Hi;
 
-            const rate95 = historyData.totalRuns > 0 
-                ? (historyData.success95Count / historyData.totalRuns * 100).toFixed(1) 
-                : '0.0';
-            const rate99 = historyData.totalRuns > 0 
-                ? (historyData.success99Count / historyData.totalRuns * 100).toFixed(1) 
-                : '0.0';
+            const err     = Math.abs(truePopMean - currentSampleMean);
+            const errPct  = (err / truePopMean * 100).toFixed(2);
+            const dir     = currentSampleMean > truePopMean ? '높습니다' : '낮습니다';
 
-            // 통계적 매개변수를 분석하여 즉각적인 진단 메시지(인사이트)를 생성한다.
-            let insightText = '';
-            if (sampleSize < 100) {
-                insightText = `표본 크기(n = ${sampleSize})가 상대적으로 작기 때문에 표준오차(SE = ${Math.round(standardError).toLocaleString()}원)가 다소 높게 계산되었습니다. 이에 따라 신뢰구간의 추정 대역폭이 비정밀하게 퍼져 정밀도가 낮습니다. 정밀한 조사를 위해서는 표본의 수를 늘려 오차 한계를 좁혀야 합니다.`;
-            } else if (sampleSize >= 300) {
-                insightText = `표본 크기(n = ${sampleSize})가 대규모로 확보되어 표준오차(SE = ${Math.round(standardError).toLocaleString()}원)가 안정적으로 최소화되었습니다. 표본 평균 주변에 모평균 참값이 존재할 확률을 매우 조밀한 신뢰구간 내로 압축하여 높은 정밀도의 추정이 실현되었습니다.`;
-            } else {
-                insightText = `표본 크기(n = ${sampleSize})가 적정한 표준 크기를 이루고 있어 표준오차(SE = ${Math.round(standardError).toLocaleString()}원) 역시 합리적인 제어 범위 내에 머무르고 있습니다. 전형적인 중심극한정리의 표집 양상을 보여줍니다.`;
+            const rate95  = historyData.totalRuns > 0
+                ? (historyData.success95Count / historyData.totalRuns * 100).toFixed(1) : '0.0';
+            const rate99  = historyData.totalRuns > 0
+                ? (historyData.success99Count / historyData.totalRuns * 100).toFixed(1) : '0.0';
+
+            // --- 인사이트 문장: 표본 크기에 따른 맥락적 진단 ---
+            let sizeInsight;
+            if      (sampleSize < 100)  sizeInsight = `표본 크기(n)가 <b>소규모(${sampleSize}명)</b>이므로 표준오차가 크게 나타납니다. 정밀도를 높이려면 더 많은 표본이 필요합니다.`;
+            else if (sampleSize >= 300) sizeInsight = `표본 크기(n)가 <b>대규모(${sampleSize}명)</b>로 확보되어 표준오차가 안정적으로 최소화되었습니다.`;
+            else                        sizeInsight = `표본 크기(n)가 <b>적정 규모(${sampleSize}명)</b>로, 중심극한정리의 전형적인 표집 양상이 나타납니다.`;
+
+            // --- 인사이트 문장: 연령대 선택에 따른 편향 트레이드오프 진단 ---
+            const ageInsight = selected.length < regionalData.length
+                ? `표집 틀을 <b>${regionNames}</b>(으)로 제한하여 편향(Bias)이 증가하지만 표본 표준편차는 감소합니다.`
+                : `전 연령대를 포함하여 편향이 최소화되고 모집단의 변동성이 표본에 충실히 재현됩니다.`;
+
+            // --- 커버리지 수렴 진단 (20회 이상 누적 시 활성화) ---
+            let coverageDiag = '';
+            if (historyData.totalRuns >= 20) {
+                const diff = Math.abs(parseFloat(rate95) - 95);
+                if      (diff <= 3) coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)에 <b>근접하게 수렴</b>하고 있습니다.`;
+                else if (diff <= 8) coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)으로 수렴 중입니다. 시행이 늘수록 더 가까워집니다.`;
+                else                coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)과 다소 차이가 있습니다. 시행 횟수 증가 시 수렴합니다.`;
             }
 
-            if (selected.length < regionalData.length) {
-                insightText += ` 또한 표집 틀을 ${regionNames} 연령대로 제한했으므로, 다른 연령대의 소비 성향 차이가 배제되어 표본 표준편차(s = ${Math.round(currentSampleSD).toLocaleString()}원)가 좁게 형성됩니다. 이는 편향(Bias)이 증가하는 트레이드오프를 수반합니다.`;
-            } else if (selected.length === regionalData.length) {
-                insightText += ` 전 연령대를 포함한 표집 틀을 활용하여 각 연령층의 다양한 소비 경향이 균형 있게 융합되었고, 모집단의 본질적 표준편차(σ = ${Math.round(truePopSD).toLocaleString()}원)에 근접한 실제적인 변동성이 표본에 재현되었습니다.`;
-            }
+            // --- 성공/실패 인라인 뱃지 헬퍼 ---
+            const badge = ok => ok
+                ? `<span style="color:var(--success);font-weight:bold;">✓ 참값 포함 — 추정 성공</span>`
+                : `<span style="color:var(--danger);font-weight:bold;">✗ 참값 미포함 — 추정 실패</span>`;
 
+            // --- 구조화된 변수 주입 HTML 리포트 렌더링 ---
             container.innerHTML = `
-                <div style="margin-bottom: 0.8rem;">
-                    <strong>[추정 환경 개요]</strong><br>
-                    지정된 표집 틀 내 참값 모평균(&mu;)은 <span class="highlighter-mint">${Math.round(truePopMean).toLocaleString()}원</span>이며, 현재 추출된 표본평균(x̄)은 <span class="highlighter-mint">${Math.round(currentSampleMean).toLocaleString()}원</span>입니다. 
-                    추출 오차는 <span class="highlighter-mint">${Math.round(error).toLocaleString()}원</span>으로, 오차율은 <span class="highlighter-mint">${errorRate.toFixed(2)}%</span>를 가리킵니다.
-                </div>
-                <div style="margin-bottom: 0.8rem;">
-                    <strong>[신뢰구간 추정 결과]</strong><br>
-                    95% 신뢰구간은 <span class="highlighter-mint">[${Math.round(ci95Lower).toLocaleString()}원 ~ ${Math.round(ci95Upper).toLocaleString()}원]</span> 범위로 정형화되었으며, 본 추출 구간 내에 모집단 참값(&mu;)이 <strong>${contains95 ? '<span style="color:var(--success); font-weight:bold;">포함되어 추정에 성공</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않아 추정에 실패</span>'}</strong>했습니다.<br>
-                    99% 신뢰구간은 <span class="highlighter-mint">[${Math.round(ci99Lower).toLocaleString()}원 ~ ${Math.round(ci99Upper).toLocaleString()}원]</span> 범위이며, 참값(&mu;)이 <strong>${contains99 ? '<span style="color:var(--success); font-weight:bold;">포함됨</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않음</span>'}</strong>으로 나타났습니다.
-                </div>
-                <div>
-                    <strong>[통계적 인사이트 분석]</strong><br>
-                    시뮬레이션 누적 <span class="highlighter-mint">${historyData.totalRuns}회</span> 기준으로 95% 신뢰구간의 실제 참값 포함 확률은 <span class="highlighter-mint">${rate95}%</span>, 99% 신뢰구간의 실제 포함 비율은 <span class="highlighter-mint">${rate99}%</span>입니다. ${insightText}
+                <div style="display:grid; gap:0.6rem;">
+
+                    <div style="padding:0.65rem 1rem; background:var(--gold-100); border-left:3px solid var(--gold-400); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--gold-600); letter-spacing:0.06em; margin-bottom:0.35rem;">📊 이번 추출 결과</div>
+                        <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
+                            현재 <b>표본평균(x̄)</b>은 <span class="highlighter-mint">${Math.round(currentSampleMean).toLocaleString()}원</span>입니다.<br>
+                            <b>참 모평균(μ)</b>은 <span class="highlighter-mint">${Math.round(truePopMean).toLocaleString()}원</span>이며, 표본평균은 참값보다 <span class="highlighter-mint">${Math.round(err).toLocaleString()}원 (${errPct}%)</span> ${dir}<br>
+                            <b>표본표준편차(s)</b>는 <span class="highlighter-mint">${Math.round(currentSampleSD).toLocaleString()}원</span>이고, <b>표준오차(SE = s/√n)</b>는 <span class="highlighter-mint">${Math.round(se).toLocaleString()}원</span>입니다.
+                        </div>
+                    </div>
+
+                    <div style="padding:0.65rem 1rem; background:var(--pink-50); border-left:3px solid var(--pink-400); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--pink-600); letter-spacing:0.06em; margin-bottom:0.35rem;">📏 신뢰구간 추정</div>
+                        <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
+                            <b>95% 신뢰구간</b>은 <span class="highlighter-mint">[${Math.round(ci95Lo).toLocaleString()}원 ~ ${Math.round(ci95Hi).toLocaleString()}원]</span> &nbsp;→&nbsp; ${badge(ok95)}<br>
+                            <b>99% 신뢰구간</b>은 <span class="highlighter-mint">[${Math.round(ci99Lo).toLocaleString()}원 ~ ${Math.round(ci99Hi).toLocaleString()}원]</span> &nbsp;→&nbsp; ${badge(ok99)}
+                        </div>
+                    </div>
+
+                    <div style="padding:0.65rem 1rem; background:#F0FDFB; border-left:3px solid var(--success); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--success); letter-spacing:0.06em; margin-bottom:0.35rem;">📈 누적 시뮬레이션 (${historyData.totalRuns}회 기준)</div>
+                        <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
+                            <b>95% CI</b> 참값 포함 비율: <span class="highlighter-mint">${rate95}%</span> <span style="font-size:0.77rem;color:var(--slate-700);">(이론값 95%)</span><br>
+                            <b>99% CI</b> 참값 포함 비율: <span class="highlighter-mint">${rate99}%</span> <span style="font-size:0.77rem;color:var(--slate-700);">(이론값 99%)</span><br>
+                            ${coverageDiag ? `<span style="font-size:0.8rem;color:var(--slate-700);">${coverageDiag}</span>` : ''}
+                        </div>
+                    </div>
+
+                    <div style="padding:0.65rem 1rem; background:var(--slate-100); border-left:3px solid var(--slate-200); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--slate-700); letter-spacing:0.06em; margin-bottom:0.35rem;">💡 통계적 인사이트</div>
+                        <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
+                            ${sizeInsight}<br>${ageInsight}
+                        </div>
+                    </div>
+
                 </div>
             `;
         }
@@ -2206,6 +2264,123 @@
                     }
                 }
             });
+
+            // ============================================================================
+            // 🔔 Chart 5: 표집분포 히스토그램 (중심극한정리 시각화)
+            //    누적 표본평균들의 분포를 히스토그램으로 표현하고, 이론적 N(μ, σ²/n) 곡선을
+            //    오버레이하여 CLT 수렴 과정을 직관적으로 보여준다.
+            // ============================================================================
+            const ctx5 = document.getElementById('samplingDistChart').getContext('2d');
+            samplingDistChart = new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '표본평균 빈도 (히스토그램)',
+                            data: [],
+                            backgroundColor: 'rgba(46, 196, 182, 0.45)',
+                            borderColor: '#2EC4B6',
+                            borderWidth: 1,
+                            barPercentage: 1.0,
+                            categoryPercentage: 1.0
+                        },
+                        {
+                            label: 'CLT 이론 정규분포 N(μ, σ²/n)',
+                            data: [],
+                            type: 'line',
+                            borderColor: 'rgba(179, 134, 70, 0.9)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            backgroundColor: 'rgba(179, 134, 70, 0.07)',
+                            tension: 0.4,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: { display: true, text: '표본평균 구간 (원)', color: '#5C474C', font: { family: 'Presentation', weight: 'bold' } },
+                            ticks: { color: '#5C474C', font: { family: 'Presentation' } },
+                            grid: { color: 'rgba(46, 196, 182, 0.12)' }
+                        },
+                        y: {
+                            title: { display: true, text: '빈도 (회)', color: '#5C474C', font: { family: 'Presentation', weight: 'bold' } },
+                            ticks: { precision: 0, color: '#5C474C', font: { family: 'Presentation' } },
+                            grid: { color: 'rgba(46, 196, 182, 0.12)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { font: { family: 'Presentation', size: 13, weight: 'bold' }, color: '#423035' } },
+                        tooltip: { bodyFont: { family: 'Presentation' }, titleFont: { family: 'Presentation', weight: 'bold' } }
+                    }
+                }
+            });
+
+            // ============================================================================
+            // 📐 Chart 6: 표준오차 vs 표본크기 이론 곡선 (σ/√n 역제곱근 감소 법칙)
+            //    n = 10 ~ 1000 범위의 이론적 SE 곡선을 그리고,
+            //    현재 설정된 n 위치를 황금색 점으로 강조 표시한다.
+            // ============================================================================
+            const ctx6 = document.getElementById('seVsNChart').getContext('2d');
+            seVsNChart = new Chart(ctx6, {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {
+                            label: '이론적 SE 곡선 (σ/√n)',
+                            data: [],
+                            borderColor: '#FF4D6D',
+                            borderWidth: 2,
+                            fill: true,
+                            backgroundColor: 'rgba(255, 77, 109, 0.07)',
+                            tension: 0.3,
+                            pointRadius: 0,
+                            parsing: false
+                        },
+                        {
+                            label: '현재 n의 이론적 SE',
+                            data: [],
+                            type: 'scatter',
+                            backgroundColor: '#B38646',
+                            borderColor: '#FFFFFF',
+                            borderWidth: 2.5,
+                            pointRadius: 9,
+                            pointHoverRadius: 11,
+                            parsing: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: { display: true, text: '표본 크기 (n)', color: '#5C474C', font: { family: 'Presentation', weight: 'bold' } },
+                            ticks: { color: '#5C474C', font: { family: 'Presentation' } },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        },
+                        y: {
+                            title: { display: true, text: '표준오차 SE (원)', color: '#5C474C', font: { family: 'Presentation', weight: 'bold' } },
+                            ticks: { color: '#5C474C', font: { family: 'Presentation' } },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { font: { family: 'Presentation', size: 13, weight: 'bold' }, color: '#423035' } },
+                        tooltip: {
+                            bodyFont: { family: 'Presentation' },
+                            callbacks: {
+                                label: ctx => ctx.datasetIndex === 1
+                                    ? `현재 n=${sampleSize}: 이론 SE = ${Math.round(ctx.raw.y).toLocaleString()}원`
+                                    : `n=${Math.round(ctx.raw.x)}: SE = ${Math.round(ctx.raw.y).toLocaleString()}원`
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         // Update visual representations of all charts
@@ -2313,8 +2488,68 @@
                 convergenceChart.data.labels = convLabels;
                 convergenceChart.data.datasets[0].data = convData;
                 convergenceChart.data.datasets[1].data = convPopMeans;
-                
                 convergenceChart.update('none');
+            }
+
+            // ============================================================================
+            // 5. 표집분포 히스토그램 업데이트 (Chart 5)
+            //    누적된 표본평균 전체를 ±4σ 고정 범위의 20개 빈으로 분류하고,
+            //    CLT 이론 정규분포 N(μ, σ²/n)을 빈도 스케일로 변환하여 오버레이한다.
+            // ============================================================================
+            if (samplingDistChart && historyData.runs.length >= 5) {
+                const thSE      = truePopSD / Math.sqrt(sampleSize); // 이론적 표준오차
+                const halfRange = 4 * thSE;                           // ±4σ 고정 범위로 축이 안정적으로 유지됨
+                const rMin      = truePopMean - halfRange;
+                const rMax      = truePopMean + halfRange;
+                const BINS      = 20;
+                const binSz     = (rMax - rMin) / BINS;
+
+                const sdLabels  = [];
+                const sdBars    = Array(BINS).fill(0);
+
+                for (let i = 0; i < BINS; i++) {
+                    sdLabels.push(`${Math.round((rMin + i * binSz) / 1000)}k`);
+                }
+
+                // 각 누적 표본평균을 해당 빈에 분류한다.
+                historyData.runs.forEach(run => {
+                    const idx = Math.floor((run.sampleMean - rMin) / binSz);
+                    if (idx >= 0 && idx < BINS) sdBars[idx]++;
+                });
+
+                // CLT 이론 곡선: density × (총시행 수 × 빈 너비)로 빈도 스케일 역산
+                const N       = historyData.runs.length;
+                const sdLine  = sdLabels.map((_, i) => {
+                    const mid     = rMin + (i + 0.5) * binSz;
+                    const density = Math.exp(-0.5 * ((mid - truePopMean) / thSE) ** 2)
+                                  / (thSE * Math.sqrt(2 * Math.PI));
+                    return density * N * binSz;
+                });
+
+                samplingDistChart.data.labels           = sdLabels;
+                samplingDistChart.data.datasets[0].data = sdBars;
+                samplingDistChart.data.datasets[1].data = sdLine;
+                samplingDistChart.update('none');
+            }
+
+            // ============================================================================
+            // 6. SE vs n 이론 곡선 업데이트 (Chart 6)
+            //    n = 10 ~ 1000 범위에서 SE = σ/√n 를 10 단위로 평가하고,
+            //    현재 sampleSize 위치를 황금색 점(scatter)으로 강조한다.
+            // ============================================================================
+            if (seVsNChart) {
+                const curve = [];
+                for (let n = 10; n <= 1000; n += 10) {
+                    curve.push({ x: n, y: truePopSD / Math.sqrt(n) });
+                }
+                const curSE = truePopSD / Math.sqrt(sampleSize);
+
+                seVsNChart.data.datasets[0].data = curve;
+                seVsNChart.data.datasets[1].data = [{ x: sampleSize, y: curSE }];
+                seVsNChart.update('none');
+
+                const lbl = document.getElementById('seVsN_label');
+                if (lbl) lbl.innerText = `n = ${sampleSize}, 이론 SE ≈ ${Math.round(curSE).toLocaleString()}원`;
             }
         }
 
