@@ -1062,7 +1062,6 @@
             width: 220px;
             height: 220px;
             margin-bottom: 2rem;
-            border-radius: 50%;
             box-shadow: 0 10px 30px rgba(255, 62, 108, 0.15);
         }
 
@@ -1080,7 +1079,7 @@
     <!-- Intro Splash Screen -->
     <div id="splashScreen">
         <div class="splash-content">
-            <img src="https://cdn.pixabay.com/animation/2026/05/10/12/07/12-07-49-893_512.gif" alt="Design the Data Loading" class="splash-gif">
+            <img id="splashGif" src="https://cdn.pixabay.com/animation/2026/05/10/12/07/12-07-49-893_512.gif" alt="Design the Data Loading" class="splash-gif" style="opacity: 0; transition: opacity 0.5s;">
             <div id="splashText" class="splash-text"></div>
         </div>
     </div>
@@ -1429,8 +1428,27 @@
             // Draw initial sample
             drawNewSample();
 
-            // Run the Splash Screen typing intro animation
-            runSplashScreen();
+            // GIF 이미지가 완전히 로딩 완료되어 픽셀 데이터가 확보되어야 스플래시와 모든 타이머/애니메이션이 재생을 개시하도록 설계한다.
+            const splashGif = document.getElementById('splashGif');
+            
+            function startOpeningSequence() {
+                if (splashGif) splashGif.style.opacity = '1';
+                runSplashScreen();
+            }
+
+            if (splashGif) {
+                // 브라우저가 이미지를 캐싱하여 DOM 로드 시점에 이미 완료(complete) 상태인 경우 즉시 실행
+                if (splashGif.complete && splashGif.naturalWidth !== 0) {
+                    startOpeningSequence();
+                } else {
+                    // 미완료 상태인 경우 완전히 로드될 때까지 락을 걸고 대기한다.
+                    splashGif.addEventListener('load', startOpeningSequence);
+                    // 오프라인/네트워크 장애 상황에서도 앱이 멈추지 않도록 에러 발생 시에도 시퀀스를 구동하는 예외 안전 처리를 덧붙인다.
+                    splashGif.addEventListener('error', startOpeningSequence);
+                }
+            } else {
+                startOpeningSequence();
+            }
         });
 
         // Box-Muller transform for normal distribution
@@ -1926,15 +1944,7 @@
         // --- 트로트 및 댄스풍 배경음악 리소스 정의 ---
         let musicType = 'ghibli'; // 'ghibli' 또는 'trot'
 
-        // 신나고 익살스러운 트로트 펜타토닉 멜로디 루프 시퀀스 (강남스타일 리듬 구조 차용)
-        const trotMelody = [
-            69, null, 69, 69, 72, null, 72, 72, // 1마디: 쿵짝쿵짝 신나는 도입부
-            74, 74, 76, 74, 72, 69, 72, 74,     // 2마디: 꺾어주는 멜로디
-            76, null, 76, 76, 79, null, 79, 79, // 3마디: 고조되는 비트
-            81, 79, 76, 74, 72, 69, 69, null    // 4마디: 마무리 바운스
-        ];
-
-        const trotChordRoots = [45, 41, 48, 43]; // A2 - F2 - C3 - G2 (트로트 특화 코드 근음)
+        const trotChordRoots = [45, 41, 48, 43]; // A2 - F2 - C3 - G2 (기본 트로트 진행 구조)
         const trotChords = [
             [57, 60, 64], // Am
             [53, 57, 60], // F
@@ -1958,6 +1968,7 @@
         }
 
         // 매 단계마다 선택된 음악 모드(지브리 vs 트로트)의 반주 음들과 멜로디를 조합하여 합성
+        // 트로트는 음악이 진행될수록 파트가 축적되며, 네온사인 음, 조바꿈, 그리고 에코 형태의 4스텝 지연 돌림노래(Canon)로 고조된다.
         function scheduleMusicStep(step, time) {
             const chordIdx = Math.floor(step / 8) % 4;
             const stepInChord = step % 8;
@@ -1985,80 +1996,79 @@
                     playNodeSound(melodyFreq, time, 0.45, 'triangle', 0.08);
                 }
             } else {
-                // 신나고 웃긴 트로트/테크노 연주 엔진 (Sawtooth/Square 파형의 강렬한 조합)
-                // 1. 쿵짝쿵짝 4비트 다운비트 톱니파 베이스라인
+                // --- 트로트 / 강남스타일 향연 클라이맥스 연주 엔진 ---
+                // 전체 스텝을 384스텝 단위 루프(약 1분)로 묶고, 64스텝(약 11초)마다 새로운 파트를 레이어링한다.
+                const loopStep = step % 384;
+                const section = Math.floor(loopStep / 64); // 0 ~ 5 단계의 고조부
+                
+                // 클라이맥스 하이라이트(Section 4 이상: 스텝 256 이상)에 진입하면 B minor로 조바꿈(+2반음)되어 축제의 흥을 극대화한다.
+                const transpose = section >= 4 ? 2 : 0;
+                
+                // 1. 쿵짝 베이스라인 (모든 섹션 기본 가동)
                 if (stepInChord % 2 === 0) {
-                    const bassMidi = trotChordRoots[chordIdx] + (stepInChord % 4 === 0 ? 0 : 12);
+                    const bassRoot = trotChordRoots[chordIdx] + transpose;
+                    const bassMidi = bassRoot + (stepInChord % 4 === 0 ? 0 : 12);
                     const bassFreq = 440 * Math.pow(2, (bassMidi - 69) / 12);
                     playNodeSound(bassFreq, time, 0.14, 'sawtooth', 0.12);
                 }
-
-                // 2. 오프비트 신스 스타브 화음 반주 (트로트 특유의 강세 표현)
-                if (stepInChord === 0 || stepInChord === 3 || stepInChord === 5) {
-                    trotChords[chordIdx].forEach(midiNote => {
-                        const stabFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
-                        playNodeSound(stabFreq, time, 0.1, 'square', 0.03);
-                    });
+                
+                // 2. 오프비트 스타브 코드 반주 (Section 1 이상부터 추가 - 축제 비트 가세)
+                if (section >= 1) {
+                    if (stepInChord === 0 || stepInChord === 3 || stepInChord === 5) {
+                        trotChords[chordIdx].forEach(midiNote => {
+                            const stabFreq = 440 * Math.pow(2, (midiNote + transpose - 69) / 12);
+                            playNodeSound(stabFreq, time, 0.1, 'square', 0.03);
+                        });
+                    }
                 }
-
-                // 3. 뽕짝 느낌의 통통 튀는 사각파 멜로디 연주
-                const melodyIdx = step % trotMelody.length;
-                const melodyMidi = trotMelody[melodyIdx];
-                if (melodyMidi !== null) {
-                    const melodyFreq = 440 * Math.pow(2, (melodyMidi - 69) / 12);
+                
+                // 3. 네온사인 고주파 아르페지오 (Section 2 이상부터 추가 - 현란한 네온 신스 탑재)
+                if (section >= 2) {
+                    if (stepInChord % 2 === 1) {
+                        const neonNotes = trotChords[chordIdx];
+                        const neonMidi = neonNotes[stepInChord % 3] + 24 + transpose; 
+                        const neonFreq = 440 * Math.pow(2, (neonMidi - 69) / 12);
+                        playNodeSound(neonFreq, time, 0.08, 'sawtooth', 0.02);
+                    }
+                }
+                
+                // 4. 알고리즘 기반 계속 변화하는 표면 멜로디 (메인 보이스)
+                const primaryMidi = getDynamicTrotNote(step, chordIdx, transpose);
+                if (primaryMidi !== null) {
+                    const melodyFreq = 440 * Math.pow(2, (primaryMidi - 69) / 12);
                     playNodeSound(melodyFreq, time, 0.16, 'square', 0.08);
                 }
+
+                // 5. 돌림노래 (Canon) 파트 (Section 3 이상에서 메인 멜로디를 4스텝 지연 재생하여 돌림노래 향연 연출)
+                if (section >= 3) {
+                    const delaySteps = 4;
+                    const prevChordIdx = Math.floor((step - delaySteps) / 8) % 4;
+                    const canonMidi = getDynamicTrotNote(step - delaySteps, prevChordIdx, transpose);
+                    if (canonMidi !== null) {
+                        // 1옥타브 높게 연주하고 볼륨을 줄여 깊이 있는 화성적 대위법 효과를 자아낸다.
+                        const canonFreq = 440 * Math.pow(2, (canonMidi + 12 - 69) / 12);
+                        playNodeSound(canonFreq, time, 0.12, 'square', 0.04);
+                    }
+                }
             }
         }
 
-        // 음악 종류 선택 활성화 함수
-        function selectMusic(type) {
-            musicType = type;
-            if (!audioCtx) {
-                initAudio();
-            }
-            audioCtx.resume();
-            isPlayingMusic = true;
-
-            // 음악 버튼들의 디자인을 변경하여 활성화 여부 표현
-            const btnGhibli = document.getElementById('musicBtnGhibli');
-            const btnTrot = document.getElementById('musicBtnTrot');
-            if (type === 'ghibli') {
-                btnGhibli.style.background = 'var(--pink-500)';
-                btnGhibli.style.color = 'white';
-                btnTrot.style.background = 'white';
-                btnTrot.style.color = 'var(--pink-600)';
-            } else {
-                btnTrot.style.background = 'var(--pink-500)';
-                btnTrot.style.color = 'white';
-                btnGhibli.style.background = 'white';
-                btnGhibli.style.color = 'var(--pink-600)';
-            }
-
-            if (!musicTimer) {
-                nextNoteTime = audioCtx.currentTime + 0.05;
-                currentStep = 0;
-                musicScheduler();
-            }
-        }
-
-        // 음악 끄기 함수
-        function stopMusic() {
-            isPlayingMusic = false;
-            const btnGhibli = document.getElementById('musicBtnGhibli');
-            const btnTrot = document.getElementById('musicBtnTrot');
-            btnGhibli.style.background = 'white';
-            btnGhibli.style.color = 'var(--pink-600)';
-            btnTrot.style.background = 'white';
-            btnTrot.style.color = 'var(--pink-600)';
-
-            if (musicTimer) {
-                clearTimeout(musicTimer);
-                musicTimer = null;
-            }
-            if (audioCtx) {
-                audioCtx.suspend();
-            }
+        // 실시간 수학적 수식(삼각함수 시드)으로 불규칙성과 음악성을 조율하여 계속 변하는 뽕짝 멜로디 생성
+        function getDynamicTrotNote(step, chordIdx, transpose = 0) {
+            const baseRoot = trotChordRoots[chordIdx] + transpose;
+            const pentatonicIntervals = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
+            
+            // 삼각함수로 멜로디의 높낮이를 주기적으로 자동 계산 (계속 바뀌는 멜로디 실현)
+            const seed = Math.sin(step * 0.35) * 6 + Math.cos(step * 0.15) * 4;
+            const noteIndex = Math.abs(Math.floor(seed)) % pentatonicIntervals.length;
+            
+            const midiNote = baseRoot + 24 + pentatonicIntervals[noteIndex];
+            
+            // 싱코페이션(쉼표) 리듬 패턴 배치
+            const rhythmPattern = [1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0];
+            if (rhythmPattern[step % 16] === 0) return null;
+            
+            return midiNote;
         }
 
         // 스플래시 화면 타이핑 및 도트 루프 애니메이션 재생 함수
