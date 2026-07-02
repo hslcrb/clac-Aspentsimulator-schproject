@@ -33,7 +33,7 @@
     <!-- Vanilla CSS Styling -->
     <style>
         html {
-            font-size: 300%;
+            font-size: 120%;
         }
 
         /* Disable text selection and drag on emojis */
@@ -1610,8 +1610,8 @@
 
         // Chart Initialization
         function initCharts() {
-            // Set Chart.js fonts to match x3 scale
-            Chart.defaults.font.size = 36;
+            // Set Chart.js fonts to match custom base scale
+            Chart.defaults.font.size = 14;
             Chart.defaults.font.family = 'Presentation';
 
             // Chart 1: Distribution (Histogram of sample + True Pop PDF)
@@ -1696,7 +1696,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                font: { family: 'Presentation', size: 33, weight: 'bold' },
+                                font: { family: 'Presentation', size: 13, weight: 'bold' },
                                 color: '#423035'
                             }
                         },
@@ -1780,7 +1780,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                font: { family: 'Presentation', size: 33, weight: 'bold' },
+                                font: { family: 'Presentation', size: 13, weight: 'bold' },
                                 color: '#423035'
                             }
                         },
@@ -1867,7 +1867,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                font: { family: 'Presentation', size: 30, weight: 'bold' },
+                                font: { family: 'Presentation', size: 12, weight: 'bold' },
                                 color: '#423035'
                             }
                         },
