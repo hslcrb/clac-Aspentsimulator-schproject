@@ -1035,7 +1035,9 @@
 <body>
 
     <!-- Cherry Blossom Overlay Canvas -->
-    <canvas id="blossomCanvas"></canvas>
+    <canvas id="blossomCanvas" layoutsubtree>
+        <div id="nativePetalDom" style="width: 24px; height: 32px; background-color: #FFB7C5; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; transform: rotate(-15deg); box-shadow: inset -2px -2px 5px rgba(255,255,255,0.4); border: 1px solid rgba(255, 112, 136, 0.4); position: absolute; left: -9999px; top: -9999px;"></div>
+    </canvas>
 
     <!-- Header Section -->
     <header>
@@ -2364,14 +2366,23 @@
             }
 
             draw() {
-                if (!petalHtmlImage || !petalHtmlImage.complete) return;
                 blossomCtx.save();
                 blossomCtx.translate(this.x, this.y);
                 blossomCtx.rotate(this.angle * Math.PI / 180);
                 blossomCtx.globalAlpha = this.opacity;
                 
-                // Draw HTML-inside-Canvas pre-rendered SVG Image
-                blossomCtx.drawImage(petalHtmlImage, -this.size, -this.size, this.size * 2, this.size * 2);
+                // Chrome's experimental HTML-in-Canvas API (progressive enhancement)
+                // 만약 브라우저가 최신 오리진 트라이얼 API인 drawElementImage를 지원하면, DOM 요소를 직접 캔버스 내부에 투영하여 렌더링한다.
+                if (blossomCtx.drawElementImage) {
+                    const petalDom = document.getElementById('nativePetalDom');
+                    if (petalDom) {
+                        // 캔버스 내부에 배치된 실제 HTML 요소를 직접 픽셀 버퍼에 투영
+                        blossomCtx.drawElementImage(petalDom, -this.size, -this.size);
+                    }
+                } else if (petalHtmlImage && petalHtmlImage.complete) {
+                    // 표준 브라우저에서는 사전 렌더링된 SVG foreignObject Blob 이미지를 그리는 Fallback을 실행하여 호환성을 유지한다.
+                    blossomCtx.drawImage(petalHtmlImage, -this.size, -this.size, this.size * 2, this.size * 2);
+                }
                 blossomCtx.restore();
             }
         }
