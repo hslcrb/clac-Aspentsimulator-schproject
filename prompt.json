@@ -1,0 +1,40 @@
+{
+    "role": "You are a senior frontend engineer and applied statistics educator who builds clean, single-file educational web simulators for Korean high school students.",
+    "task": "Generate ONE self-contained HTML file (no external JS/CSS files, inline <style> and <script> only) that simulates confidence interval estimation of a population mean.",
+    "topic_ko": "배달 구독 서비스 출시에 따른 잠재고객 1인당 월 평균 예상 소비액 추정",
+    "output_filename": "배달 구독 서비스 출시에 따른 잠재고객 1인당 월 평균 예상 소비액 추정.html",
+    "context": {
+        "population": "The entire nationwide population of potential customers who might use a new delivery subscription service, and their individual monthly spending amount (원).",
+        "problem_being_solved": "In question 2, it was noted that drawing a purely random nationwide sample causes residents from different regions (with different spending patterns) to mix together, which can distort the estimate. This simulator must let the user restrict/control the sampling frame by region to address that issue, in addition to a normal fully-random nationwide option."
+    },
+    "statistical_requirements": {
+        "synthetic_population": "Since real population data does not exist, generate a simulated population client-side in JavaScript. Represent the population as several regional groups (e.g. 수도권, 충청권, 경상권, 전라권, 강원권, 제주권), each with its own realistic mean and standard deviation for monthly spending, so that regional mixing genuinely changes the sample distribution.",
+        "sampling_controls": [
+            "A slider or number input to control sample size (n), reasonable range e.g. 10–1000.",
+            "A region selector (checkboxes or multi-select) so the user can either (a) sample from the whole nation (all regions mixed) or (b) restrict sampling to one or more specific regions only — this is the required feature that limits the regional-mixing problem."
+        ],
+        "computed_statistics": [
+            "표본평균 (sample mean, x̄)",
+            "표본표준편차 (sample standard deviation, using n-1 in the denominator)",
+            "95% confidence interval using x̄ ± 1.96 × (s / √n)",
+            "99% confidence interval using x̄ ± 2.576 × (s / √n)"
+        ],
+        "display_precision": "Round monetary values to the nearest 원, round statistics to 1–2 decimal places where appropriate.",
+        "interaction": "A button labeled '표본 추출' (or similar) that draws a fresh random sample each time it is clicked, based on current sample size and region selection, and updates all statistics immediately."
+    },
+    "design_requirements": {
+        "style": "Elegant, minimal, calm and professional — NOT over-engineered. Avoid heavy gradients, excessive shadows, unnecessary animation, or decorative clutter.",
+        "layout": "Single centered card/panel layout, clear typographic hierarchy, generous whitespace, responsive for both desktop and mobile.",
+        "color_palette": "Choose a restrained, cohesive palette (2–3 core colors plus neutrals) appropriate for a serious statistics tool.",
+        "language": "All visible UI text must be in Korean.",
+        "must_use_font": "Font-family 'Presentation' for ALL text on the page, applied via the exact @font-face declarations below — do not substitute or add any other font family."
+    },
+    "required_font_face_css": "@font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-1Thin.woff2') format('woff2'); font-weight: 100; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-2ExtraLight.woff2') format('woff2'); font-weight: 200; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-3Light.woff2') format('woff2'); font-weight: 300; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-5Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-8ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; } @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-9Black.woff2') format('woff2'); font-weight: 900; font-display: swap; }",
+    "technical_constraints": [
+        "Output must be a single .html file with everything inline — no separate files, no build tools, no external JS libraries required.",
+        "Use plain vanilla JavaScript (no frameworks).",
+        "Code must run correctly when opened directly in a browser (file:// is fine).",
+        "Keep the implementation readable and reasonably concise — do not over-build with unnecessary extra features beyond what's specified."
+    ],
+    "deliverable_instruction": "Return ONLY the complete HTML file content, starting with <!DOCTYPE html> and ending with </html>. Do not include explanations before or after the code."
+}
