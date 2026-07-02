@@ -1285,9 +1285,9 @@
                     style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
                     🌸 지브리
                 </button>
-                <button id="musicBtnTrot" onclick="selectMusic('trot')"
+                <button id="musicBtnBeatPop" onclick="selectMusic('beatPop')"
                     style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
-                    트로트
+                    비트앤팝
                 </button>
                 <button onclick="stopMusic()"
                     style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: var(--pink-500); color: white; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
@@ -1326,7 +1326,9 @@
                 <div class="form-group">
                     <div class="form-label">
                         <span>표본 크기 (n)</span>
-                        <span class="input-badge" id="sampleSizeDisplay">100</span>
+                        <input type="number" id="sampleSizeInput" min="10" max="1000" value="100"
+                            style="width: 4.5rem; padding: 2px 4px; font-size: 0.85rem; border: 1px solid var(--pink-300); border-radius: 4px; color: var(--slate-900); text-align: center; font-weight: bold; background: white;"
+                            oninput="updateSampleSize(this.value)">
                     </div>
                     <input type="range" id="sampleSizeSlider" min="10" max="1000" step="5" value="100"
                         oninput="updateSampleSize(this.value)">
@@ -1811,10 +1813,22 @@
             document.getElementById('popSdValue').innerText = `모표준편차 (σ): ${Math.round(truePopSD).toLocaleString()}원`;
         }
 
-        // Update sample size slider values
+        // Update sample size slider values and direct input values
         function updateSampleSize(val) {
-            sampleSize = parseInt(val);
-            document.getElementById('sampleSizeDisplay').innerText = sampleSize;
+            let parsed = parseInt(val);
+            if (isNaN(parsed) || parsed < 10) return;
+            if (parsed > 1000) parsed = 1000;
+            sampleSize = parsed;
+
+            // Sync range slider
+            const slider = document.getElementById('sampleSizeSlider');
+            if (slider) slider.value = sampleSize;
+
+            // Sync number input if the cursor is not in it (to avoid keyboard cursor jumps)
+            const numInput = document.getElementById('sampleSizeInput');
+            if (numInput && document.activeElement !== numInput) {
+                numInput.value = sampleSize;
+            }
 
             // Draw a fresh sample
             drawNewSample();
@@ -2262,16 +2276,207 @@
             osc.stop(startTime + duration);
         }
 
-        // --- 트로트 및 댄스풍 배경음악 리소스 정의 ---
-        let musicType = 'ghibli'; // 'ghibli' 또는 'trot'
+        // --- 비트앤팝 및 지브리 배경음악 리소스 정의 ---
+        let musicType = 'ghibli'; // 'ghibli' 또는 'beatPop'
 
-        const trotChordRoots = [45, 41, 48, 43]; // A2 - F2 - C3 - G2 (기본 트로트 진행 구조)
-        const trotChords = [
+        const beatPopChordRoots = [45, 41, 48, 43]; // A2 - F2 - C3 - G2 (기본 비트앤팝 진행 구조)
+        const beatPopChords = [
             [57, 60, 64], // Am
             [53, 57, 60], // F
             [55, 60, 64], // C
             [55, 59, 62]  // G
         ];
+
+        let noiseBuffer = null;
+        function getNoiseBuffer() {
+            if (!audioCtx) return null;
+            if (noiseBuffer) return noiseBuffer;
+            const bufferSize = audioCtx.sampleRate * 2;
+            noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            return noiseBuffer;
+        }
+
+        // --- Beat & Pop Synthesized Instruments ---
+        function playKick(startTime) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(140, startTime);
+            osc.frequency.exponentialRampToValueAtTime(45, startTime + 0.12);
+
+            gainNode.gain.setValueAtTime(0.35, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+
+            osc.connect(gainNode);
+            gainNode.connect(masterGain);
+
+            osc.start(startTime);
+            osc.stop(startTime + 0.16);
+        }
+
+        function playHiHat(startTime) {
+            if (!audioCtx) return;
+            const buffer = getNoiseBuffer();
+            if (!buffer) return;
+            
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.setValueAtTime(8000, startTime);
+
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.04, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.05);
+
+            source.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(masterGain);
+
+            source.start(startTime);
+            source.stop(startTime + 0.06);
+        }
+
+        function playSnare(startTime) {
+            if (!audioCtx) return;
+            const buffer = getNoiseBuffer();
+            if (!buffer) return;
+            
+            const noiseSource = audioCtx.createBufferSource();
+            noiseSource.buffer = buffer;
+
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(1200, startTime);
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.06, startTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+
+            noiseSource.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(masterGain);
+
+            const osc = audioCtx.createOscillator();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(180, startTime);
+            osc.frequency.exponentialRampToValueAtTime(120, startTime + 0.08);
+
+            const toneGain = audioCtx.createGain();
+            toneGain.gain.setValueAtTime(0.05, startTime);
+            toneGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.09);
+
+            osc.connect(toneGain);
+            toneGain.connect(masterGain);
+
+            noiseSource.start(startTime);
+            noiseSource.stop(startTime + 0.16);
+            osc.start(startTime);
+            osc.stop(startTime + 0.1);
+        }
+
+        function playBass(midiNote, startTime, duration) {
+            if (!audioCtx) return;
+            const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, startTime);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(250, startTime);
+            filter.frequency.exponentialRampToValueAtTime(120, startTime + duration);
+            filter.Q.setValueAtTime(4, startTime);
+
+            gainNode.gain.setValueAtTime(0.14, startTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+            osc.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(masterGain);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration + 0.05);
+        }
+
+        function playChordStab(notes, startTime, duration) {
+            if (!audioCtx) return;
+            notes.forEach(midiNote => {
+                const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(freq - 2, startTime);
+                osc2.type = 'triangle';
+                osc2.frequency.setValueAtTime(freq + 2, startTime);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(800, startTime);
+                filter.frequency.exponentialRampToValueAtTime(300, startTime + duration);
+
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(0.02, startTime + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+                osc1.connect(filter);
+                osc2.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(delayNode);
+                gainNode.connect(masterGain);
+
+                osc1.start(startTime);
+                osc2.start(startTime);
+                osc1.stop(startTime + duration + 0.05);
+                osc2.stop(startTime + duration + 0.05);
+            });
+        }
+
+        function playLeadPop(midiNote, startTime, duration) {
+            if (!audioCtx) return;
+            const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+            
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(freq - 1.5, startTime);
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(freq + 1.5, startTime);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1800, startTime);
+            filter.frequency.exponentialRampToValueAtTime(600, startTime + duration);
+            filter.Q.setValueAtTime(3, startTime);
+
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.07, startTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(delayNode);
+            gainNode.connect(masterGain);
+
+            osc1.start(startTime);
+            osc2.start(startTime);
+            osc1.stop(startTime + duration + 0.05);
+            osc2.stop(startTime + duration + 0.05);
+        }
 
         // Web Audio API 오디오 스케줄링 전용 타이머 루프
         function musicScheduler() {
@@ -2280,28 +2485,26 @@
             while (nextNoteTime < audioCtx.currentTime + 0.1) {
                 scheduleMusicStep(currentStep, nextNoteTime);
 
-                // 트로트는 빠른 템포(비트 간격 180ms), 지브리는 몽글한 템포(300ms)로 분리 설정한다.
-                const stepIncrement = musicType === 'trot' ? 0.18 : 0.3;
+                // 비트앤팝은 경쾌한 댄스 템포(비트 간격 150ms), 지브리는 몽글한 템포(300ms)로 분리 설정한다.
+                const stepIncrement = musicType === 'beatPop' ? 0.15 : 0.3;
                 nextNoteTime += stepIncrement;
                 currentStep++;
             }
             musicTimer = setTimeout(musicScheduler, 25);
         }
 
-        // 매 단계마다 선택된 음악 모드(지브리 vs 트로트)의 반주 음들과 멜로디를 조합하여 합성
-        // 트로트는 음악이 진행될수록 파트가 축적되며, 네온사인 음, 조바꿈, 그리고 에코 형태의 4스텝 지연 돌림노래(Canon)로 고조된다.
+        // 매 단계마다 선택된 음악 모드(지브리 vs 비트앤팝)의 반주 음들과 멜로디를 조합하여 합성
+        // 비트앤팝은 하우스 비트 위에 그루비한 베이스와 코드 스탭, 네온 아르페지오, 그리고 4스텝 돌림노래로 빌드업된다.
         function scheduleMusicStep(step, time) {
             const chordIdx = Math.floor(step / 8) % 4;
             const stepInChord = step % 8;
 
             if (musicType === 'ghibli') {
-                // 1. 코드 마디 첫 박자에 묵직하고 따스한 근음(Base) 연출
                 if (stepInChord === 0) {
                     const bassFreq = 440 * Math.pow(2, (chordRoots[chordIdx] - 69) / 12);
                     playNodeSound(bassFreq, time, 2.2, 'sine', 0.12);
                 }
 
-                // 2. 부드럽게 반주 화음을 아르페지오로 분산 연주
                 if (stepInChord % 2 === 0) {
                     const noteIdx = (stepInChord / 2) % 3;
                     const midiNote = chords[chordIdx][noteIdx];
@@ -2309,7 +2512,6 @@
                     playNodeSound(arpeggioFreq, time, 0.7, 'sine', 0.04);
                 }
 
-                // 3. 서정적이고 아련한 지브리 스타일 멜로디 전개
                 const melodyIdx = step % melodyNotes.length;
                 const melodyMidi = melodyNotes[melodyIdx];
                 if (melodyMidi !== null) {
@@ -2317,66 +2519,80 @@
                     playNodeSound(melodyFreq, time, 0.45, 'triangle', 0.08);
                 }
             } else {
-                // --- 트로트 / 강남스타일 향연 클라이맥스 연주 엔진 ---
-                // 전체 스텝을 384스텝 단위 루프(약 1분)로 묶고, 64스텝(약 11초)마다 새로운 파트를 레이어링한다.
+                // --- 비트앤팝(Beat & Pop) 연주 엔진 ---
                 const loopStep = step % 384;
                 const section = Math.floor(loopStep / 64); // 0 ~ 5 단계의 고조부
+                const transpose = section >= 4 ? 2 : 0; // Section 4에서 조바꿈(+2반음)
 
-                // 클라이맥스 하이라이트(Section 4 이상: 스텝 256 이상)에 진입하면 B minor로 조바꿈(+2반음)되어 축제의 흥을 극대화한다.
-                const transpose = section >= 4 ? 2 : 0;
-
-                // 1. 쿵짝 베이스라인 (모든 섹션 기본 가동)
-                if (stepInChord % 2 === 0) {
-                    const bassRoot = trotChordRoots[chordIdx] + transpose;
-                    const bassMidi = bassRoot + (stepInChord % 4 === 0 ? 0 : 12);
-                    const bassFreq = 440 * Math.pow(2, (bassMidi - 69) / 12);
-                    playNodeSound(bassFreq, time, 0.14, 'sawtooth', 0.12);
+                // 1. 드럼 파트 (Section 0: Kick, Section 1: Full Beat, Section 2+: Double Hat)
+                if (step % 4 === 0) {
+                    playKick(time);
                 }
-
-                // 2. 오프비트 스타브 코드 반주 (Section 1 이상부터 추가 - 축제 비트 가세)
                 if (section >= 1) {
-                    if (stepInChord === 0 || stepInChord === 3 || stepInChord === 5) {
-                        trotChords[chordIdx].forEach(midiNote => {
-                            const stabFreq = 440 * Math.pow(2, (midiNote + transpose - 69) / 12);
-                            playNodeSound(stabFreq, time, 0.1, 'square', 0.03);
-                        });
+                    if (step % 8 === 4) {
+                        playSnare(time);
+                    }
+                    if (step % 4 === 2) {
+                        playHiHat(time);
+                    }
+                }
+                if (section >= 2) {
+                    if (step % 2 === 1) {
+                        playHiHat(time);
                     }
                 }
 
-                // 3. 네온사인 고주파 아르페지오 (Section 2 이상부터 추가 - 현란한 네온 신스 탑재)
+                // 2. 그루비 베이스라인 (모든 섹션 가동, 섹션별 변주)
+                let playBassStep = false;
+                if (section === 0) {
+                    playBassStep = (stepInChord === 0 || stepInChord === 4);
+                } else {
+                    playBassStep = (stepInChord === 0 || stepInChord === 3 || stepInChord === 6);
+                }
+                if (playBassStep) {
+                    playBass(beatPopChordRoots[chordIdx] + 12 + transpose, time, 0.2);
+                }
+
+                // 3. 코드 반주 (Section 2 이상부터 추가)
                 if (section >= 2) {
+                    if (stepInChord === 0 || stepInChord === 3) {
+                        playChordStab(beatPopChords[chordIdx], time, 0.4);
+                    }
+                }
+
+                // 4. 네온사인 고주파 아르페지오 (Section 3 이상부터 추가)
+                if (section >= 3) {
                     if (stepInChord % 2 === 1) {
-                        const neonNotes = trotChords[chordIdx];
+                        const neonNotes = beatPopChords[chordIdx];
                         const neonMidi = neonNotes[stepInChord % 3] + 24 + transpose;
                         const neonFreq = 440 * Math.pow(2, (neonMidi - 69) / 12);
-                        playNodeSound(neonFreq, time, 0.08, 'sawtooth', 0.02);
+                        playNodeSound(neonFreq, time, 0.08, 'triangle', 0.03);
                     }
                 }
 
-                // 4. 알고리즘 기반 계속 변화하는 표면 멜로디 (메인 보이스)
-                const primaryMidi = getDynamicTrotNote(step, chordIdx, transpose);
-                if (primaryMidi !== null) {
-                    const melodyFreq = 440 * Math.pow(2, (primaryMidi - 69) / 12);
-                    playNodeSound(melodyFreq, time, 0.16, 'square', 0.08);
+                // 5. 메인 보이스 멜로디 (Section 5는 아웃트로이므로 멜로디 생략)
+                if (section < 5) {
+                    const primaryMidi = getDynamicBeatPopNote(step, chordIdx, transpose);
+                    if (primaryMidi !== null) {
+                        playLeadPop(primaryMidi, time, 0.2);
+                    }
                 }
 
-                // 5. 돌림노래 (Canon) 파트 (Section 3 이상에서 메인 멜로디를 4스텝 지연 재생하여 돌림노래 향연 연출)
-                if (section >= 3) {
+                // 6. 돌림노래 (Canon) 파트 (Section 3, 4에서 메인 멜로디를 4스텝 지연 재생)
+                if (section === 3 || section === 4) {
                     const delaySteps = 4;
                     const prevChordIdx = Math.floor((step - delaySteps) / 8) % 4;
-                    const canonMidi = getDynamicTrotNote(step - delaySteps, prevChordIdx, transpose);
+                    const canonMidi = getDynamicBeatPopNote(step - delaySteps, prevChordIdx, transpose);
                     if (canonMidi !== null) {
-                        // 1옥타브 높게 연주하고 볼륨을 줄여 깊이 있는 화성적 대위법 효과를 자아낸다.
-                        const canonFreq = 440 * Math.pow(2, (canonMidi + 12 - 69) / 12);
-                        playNodeSound(canonFreq, time, 0.12, 'square', 0.04);
+                        playLeadPop(canonMidi + 12, time, 0.15); // 1옥타브 높게
                     }
                 }
             }
         }
 
-        // 실시간 수학적 수식(삼각함수 시드)으로 불규칙성과 음악성을 조율하여 계속 변하는 뽕짝 멜로디 생성
-        function getDynamicTrotNote(step, chordIdx, transpose = 0) {
-            const baseRoot = trotChordRoots[chordIdx] + transpose;
+        // 실시간 수학적 수식(삼각함수 시드)으로 불규칙성과 음악성을 조율하여 계속 변하는 비트앤팝 멜로디 생성
+        function getDynamicBeatPopNote(step, chordIdx, transpose = 0) {
+            const baseRoot = beatPopChordRoots[chordIdx] + transpose;
             const pentatonicIntervals = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
 
             // 삼각함수로 멜로디의 높낮이를 주기적으로 자동 계산 (계속 바뀌는 멜로디 실현)
@@ -2385,8 +2601,8 @@
 
             const midiNote = baseRoot + 24 + pentatonicIntervals[noteIndex];
 
-            // 싱코페이션(쉼표) 리듬 패턴 배치
-            const rhythmPattern = [1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0];
+            // 팝 싱코페이션 리듬 패턴
+            const rhythmPattern = [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0];
             if (rhythmPattern[step % 16] === 0) return null;
 
             return midiNote;
@@ -2400,28 +2616,23 @@
         function selectMusic(type) {
             musicType = type;
 
-            // 최초 호출 시 AudioContext를 생성한다.
             if (!audioCtx) initAudio();
 
-            // UI 버튼 활성화 표시
             const btnGhibli = document.getElementById('musicBtnGhibli');
-            const btnTrot   = document.getElementById('musicBtnTrot');
+            const btnBeatPop = document.getElementById('musicBtnBeatPop');
             if (type === 'ghibli') {
                 btnGhibli.style.background = 'var(--pink-500)'; btnGhibli.style.color = 'white';
-                btnTrot.style.background   = 'white';           btnTrot.style.color   = 'var(--pink-600)';
+                if (btnBeatPop) { btnBeatPop.style.background = 'white'; btnBeatPop.style.color = 'var(--pink-600)'; }
             } else {
-                btnTrot.style.background   = 'var(--pink-500)'; btnTrot.style.color   = 'white';
+                if (btnBeatPop) { btnBeatPop.style.background = 'var(--pink-500)'; btnBeatPop.style.color = 'white'; }
                 btnGhibli.style.background = 'white';           btnGhibli.style.color = 'var(--pink-600)';
             }
 
-            // 이전에 실행 중이던 스케줄러가 있으면 먼저 정리한다.
             if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
             isPlayingMusic = true;
 
-            // resume()은 Promise를 반환하며, 사용자 제스처 이후 항상 resolved 된다.
-            // .then() 안에서 스케줄러를 기동해야 AudioContext가 running 상태임을 보장한다.
             audioCtx.resume().then(() => {
-                if (!isPlayingMusic) return; // 사용자가 resume 사이에 정지를 눌렀을 경우 방어
+                if (!isPlayingMusic) return;
                 nextNoteTime = audioCtx.currentTime + 0.05;
                 currentStep  = 0;
                 musicScheduler();
@@ -2435,9 +2646,9 @@
             if (audioCtx)   audioCtx.suspend();
 
             const btnGhibli = document.getElementById('musicBtnGhibli');
-            const btnTrot   = document.getElementById('musicBtnTrot');
+            const btnBeatPop = document.getElementById('musicBtnBeatPop');
             if (btnGhibli) { btnGhibli.style.background = 'white'; btnGhibli.style.color = 'var(--pink-600)'; }
-            if (btnTrot)   { btnTrot.style.background   = 'white'; btnTrot.style.color   = 'var(--pink-600)'; }
+            if (btnBeatPop)   { btnBeatPop.style.background   = 'white'; btnBeatPop.style.color   = 'var(--pink-600)'; }
         }
 
         // 스플래시 화면 타이핑 및 도트 루프 애니메이션 재생 함수
