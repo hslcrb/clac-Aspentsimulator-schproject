@@ -1022,21 +1022,16 @@
         /* Footer styling */
         footer {
             text-align: center;
-            padding: 1.5rem;
-            color: var(--slate-700);
+            padding: 0.8rem 1.5rem;
+            color: var(--pink-600);
             background-color: var(--pink-100);
             border-top: 1px solid var(--pink-200);
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-family: var(--font-point); /* 가나초콜릿체 */
+            font-size: 2.8rem; /* 푸터 상하 크높이만큼 크게 */
+            line-height: 1.2;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .footer-heart {
-            color: var(--pink-500);
-            display: inline-block;
         }
 
         /* Intro Splash Screen Styles */
@@ -1107,15 +1102,15 @@
         <div class="header-right" style="display: flex; align-items: center; gap: 0.8rem;">
             <!-- Dual Music Selector controls -->
             <div class="music-control-box" style="display: flex; align-items: center; gap: 0.4rem; background: var(--pink-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--pink-200); box-shadow: var(--shadow-sm);">
-                <span style="font-size: 0.8rem; font-weight: 700; color: var(--pink-700); padding-right: 0.2rem; user-select: none;" class="no-select-emoji">🎵 배경음악:</span>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--pink-700); padding-right: 0.2rem; user-select: none;">배경음악:</span>
                 <button id="musicBtnGhibli" onclick="selectMusic('ghibli')" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
                     🌸 지브리
                 </button>
                 <button id="musicBtnTrot" onclick="selectMusic('trot')" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
-                    🕺 트로트
+                    트로트
                 </button>
                 <button onclick="stopMusic()" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: var(--pink-500); color: white; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
-                    🔇 정지
+                    정지
                 </button>
             </div>
             <span class="tag">모평균의 신뢰구간 추정</span>
@@ -1129,7 +1124,7 @@
         <section class="sidebar">
             <!-- Sampling Frame Selector Card (연령대별 표집 틀 설정) -->
             <div class="card">
-                <h2 class="card-title"><span class="no-select-emoji">👥</span> 표집 틀 설정 (연령대 선택)</h2>
+                <h2 class="card-title">표집 틀 설정 (연령대 선택)</h2>
                 <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                     배달 구독 서비스의 잠재 고객을 <b>연령대</b>로 제한하거나 전체를 대상으로 표집 틀을 조정합니다.
                     특정 연령대로 표집 틀을 좁힐수록 편향(Bias)은 증가하지만 표본표준편차는 감소합니다.
@@ -1142,7 +1137,7 @@
 
             <!-- Sampling Size Slider Card -->
             <div class="card">
-                <h2 class="card-title"><span class="no-select-emoji">⚙️</span> 표본 추출 조건</h2>
+                <h2 class="card-title">표본 추출 조건</h2>
                 
                 <div class="form-group">
                     <div class="form-label">
@@ -1152,12 +1147,18 @@
                     <input type="range" id="sampleSizeSlider" min="10" max="1000" step="5" value="100" oninput="updateSampleSize(this.value)">
                 </div>
 
-                <button class="btn-primary" onclick="drawNewSample()">
-                    <span class="no-select-emoji">🎲</span> 표본 추출 (Sample)
-                </button>
+                <!-- 1회 및 100회 추출 듀얼 버튼 제공 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.8rem;">
+                    <button class="btn-primary" onclick="drawNewSample()" style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem;">
+                        표본 추출 (1회)
+                    </button>
+                    <button class="btn-primary" onclick="drawMultipleSamples(100)" style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem; background: var(--pink-600);">
+                        연속 추출 (100회)
+                    </button>
+                </div>
 
                 <div class="toggle-group">
-                    <span class="toggle-label"><span class="no-select-emoji">🔄</span> 자동 연속 추출</span>
+                    <span class="toggle-label">자동 연속 추출</span>
                     <label class="switch">
                         <input type="checkbox" id="autoDrawToggle" onchange="toggleAutoDraw()">
                         <span class="slider"></span>
@@ -1173,7 +1174,7 @@
                 </div>
 
                 <button class="btn-secondary" onclick="resetHistory()">
-                    <span class="no-select-emoji">🧹</span> 시뮬레이션 이력 초기화
+                    시뮬레이션 이력 초기화
                 </button>
             </div>
         </section>
@@ -1251,7 +1252,7 @@
 
             <!-- 실시간 분석 리포트 & 통계적 인사이트 카드 -->
             <div class="card" style="background-color: #FFFFFF; border: none; margin-bottom: 1.5rem;">
-                <h3 class="card-title"><span class="no-select-emoji">📋</span> 실시간 분석 리포트 &amp; 통계적 인사이트</h3>
+                <h3 class="card-title">실시간 분석 리포트 &amp; 통계적 인사이트</h3>
                 <div id="dynamicReportContent" style="font-size: 0.95rem; line-height: 1.7; color: var(--slate-800);">
                     <!-- Javascript가 실시간으로 데이터를 가리키는 리포트를 인젝션합니다. -->
                 </div>
@@ -1261,7 +1262,7 @@
             <div class="charts-grid-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: 1.5rem;">
                 <!-- Chart 1: Distributions -->
                 <div class="card">
-                    <h3 class="card-title"><span class="no-select-emoji">📊</span> 표본 분포 vs 모집단 분포</h3>
+                    <h3 class="card-title">표본 분포 vs 모집단 분포</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         추출된 표본의 상대도수 히스토그램과 선택된 지역들의 참값 밀도 함수를 겹쳐 그립니다.
                     </p>
@@ -1272,7 +1273,7 @@
 
                 <!-- Chart 2: CI History -->
                 <div class="card">
-                    <h3 class="card-title"><span class="no-select-emoji">📈</span> 신뢰구간 추정 역사 (최근 30회)</h3>
+                    <h3 class="card-title">신뢰구간 추정 역사 (최근 30회)</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         각 추출에서의 95% 신뢰구간 범위를 표시합니다. 세로선은 참 모평균(μ)을 나타내며, 참값을 포함하지 못한 구간은 <span style="color: var(--danger); font-weight: bold;">빨간색</span>으로 표시됩니다.
                     </p>
@@ -1283,7 +1284,7 @@
 
                 <!-- Chart 3: Age-group analysis -->
                 <div class="card">
-                    <h3 class="card-title"><span class="no-select-emoji">👥</span> 선택 연령대별 참값 평균 vs 현재 표본 평균 비교</h3>
+                    <h3 class="card-title">선택 연령대별 참값 평균 vs 현재 표본 평균 비교</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         각 연령대의 실제 모평균(μ_r)과 선택 집단의 가중 모평균(μ), 이번 회차의 표본평균(x̄)을 비교합니다.
                     </p>
@@ -1294,7 +1295,7 @@
 
                 <!-- Chart 4: Convergence (LLN) -->
                 <div class="card">
-                    <h3 class="card-title"><span class="no-select-emoji">📉</span> 대수의 법칙: 모평균 수렴 추이</h3>
+                    <h3 class="card-title">대수의 법칙: 모평균 수렴 추이</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         시행 횟수가 늘어남에 따라 누적 표본평균선(분홍색 실선)이 모집단의 모평균 참값(황금색 점선)으로 조화롭게 수렴해 나가는 궤적을 확인합니다.
                     </p>
@@ -1305,7 +1306,7 @@
 
                 <!-- Chart 5: 표집분포 히스토그램 (중심극한정리 CLT 시각화) -->
                 <div class="card">
-                    <h3 class="card-title"><span class="no-select-emoji">🔔</span> 표집분포: 표본평균의 분포 (중심극한정리)</h3>
+                    <h3 class="card-title">표집분포: 표본평균의 분포 (중심극한정리)</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         누적 시행에서 얻어진 <b>표본평균들의 히스토그램</b>입니다. 시행이 쌓일수록 이론적 <b>정규분포</b>에 수렴합니다 (CLT).
                     </p>
@@ -1316,7 +1317,7 @@
 
                 <!-- Chart 6: 표준오차 vs 표본크기 이론 곡선 (σ/√n) -->
                 <div class="card">
-                    <h3 class="card-title"><span class="no-select-emoji">📐</span> 표준오차 vs 표본 크기 (σ/√n 곡선)</h3>
+                    <h3 class="card-title">표준오차 vs 표본 크기 (σ/√n 곡선)</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         n이 커질수록 SE(= σ/√n)가 감소하는 이론 곡선입니다. 현재: <span id="seVsN_label" style="color: var(--pink-600); font-weight: bold;">대기 중</span>
                     </p>
@@ -1331,8 +1332,6 @@
     <!-- Footer -->
     <footer>
         <span>Hayeon <span class="no-select-emoji">🌸</span></span>
-        <span>•</span>
-        <span>Made with <span class="footer-heart no-select-emoji">🌸</span> for Statistics Education</span>
     </footer>
 
     <!-- Gacha Easter Egg Modal -->
@@ -1562,7 +1561,8 @@
         }
 
         // Draw new random sample using Box-Muller based on selected regional distributions
-        function drawNewSample() {
+        // silent 매개변수가 true일 경우 차트 렌더링 및 UI 업데이트를 건너뛰어 대규모 연속 추출 시 성능 저하를 방지한다.
+        function drawNewSample(silent = false) {
             const selected = regionalData.filter(r => r.checked);
             const sumWeights = selected.reduce((sum, r) => sum + r.weight, 0);
 
@@ -1666,6 +1666,8 @@
                 historyData.runs.shift();
             }
 
+            if (silent) return; // Silent 모드일 경우 UI 갱신 및 차트 렌더링 생략
+
             // Update history indicators
             document.getElementById('runCountValue').innerHTML = `<span>${historyData.totalRuns}</span> 회`;
             
@@ -1680,6 +1682,15 @@
 
             // Update Charts
             updateCharts();
+        }
+
+        // 한번에 지정된 횟수만큼 표본 추출을 연속 수행하는 함수
+        // 루프 중에는 silent 모드로 실행하여 렌더링 오버헤드를 막고, 마지막 추출 완료 시점에만 화면에 렌더링을 적용한다.
+        function drawMultipleSamples(count) {
+            for (let i = 0; i < count - 1; i++) {
+                drawNewSample(true);
+            }
+            drawNewSample(false);
         }
 
         // Auto Draw Controls
@@ -1793,7 +1804,7 @@
                 <div style="display:grid; gap:0.6rem;">
 
                     <div style="padding:0.65rem 1rem; background:var(--gold-100); border-left:3px solid var(--gold-400); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                        <div style="font-size:0.72rem; font-weight:700; color:var(--gold-600); letter-spacing:0.06em; margin-bottom:0.35rem;">📊 이번 추출 결과</div>
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--gold-600); letter-spacing:0.06em; margin-bottom:0.35rem;">이번 추출 결과</div>
                         <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
                             현재 <b>표본평균(x̄)</b>은 <span class="highlighter-mint">${Math.round(currentSampleMean).toLocaleString()}원</span>입니다.<br>
                             <b>참 모평균(μ)</b>은 <span class="highlighter-mint">${Math.round(truePopMean).toLocaleString()}원</span>이며, 표본평균은 참값보다 <span class="highlighter-mint">${Math.round(err).toLocaleString()}원 (${errPct}%)</span> ${dir}<br>
@@ -1802,7 +1813,7 @@
                     </div>
 
                     <div style="padding:0.65rem 1rem; background:var(--pink-50); border-left:3px solid var(--pink-400); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                        <div style="font-size:0.72rem; font-weight:700; color:var(--pink-600); letter-spacing:0.06em; margin-bottom:0.35rem;">📏 신뢰구간 추정</div>
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--pink-600); letter-spacing:0.06em; margin-bottom:0.35rem;">신뢰구간 추정</div>
                         <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
                             <b>95% 신뢰구간</b>은 <span class="highlighter-mint">[${Math.round(ci95Lo).toLocaleString()}원 ~ ${Math.round(ci95Hi).toLocaleString()}원]</span> &nbsp;→&nbsp; ${badge(ok95)}<br>
                             <b>99% 신뢰구간</b>은 <span class="highlighter-mint">[${Math.round(ci99Lo).toLocaleString()}원 ~ ${Math.round(ci99Hi).toLocaleString()}원]</span> &nbsp;→&nbsp; ${badge(ok99)}
@@ -1810,7 +1821,7 @@
                     </div>
 
                     <div style="padding:0.65rem 1rem; background:#F0FDFB; border-left:3px solid var(--success); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                        <div style="font-size:0.72rem; font-weight:700; color:var(--success); letter-spacing:0.06em; margin-bottom:0.35rem;">📈 누적 시뮬레이션 (${historyData.totalRuns}회 기준)</div>
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--success); letter-spacing:0.06em; margin-bottom:0.35rem;">누적 시뮬레이션 (${historyData.totalRuns}회 기준)</div>
                         <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
                             <b>95% CI</b> 참값 포함 비율: <span class="highlighter-mint">${rate95}%</span> <span style="font-size:0.77rem;color:var(--slate-700);">(이론값 95%)</span><br>
                             <b>99% CI</b> 참값 포함 비율: <span class="highlighter-mint">${rate99}%</span> <span style="font-size:0.77rem;color:var(--slate-700);">(이론값 99%)</span><br>
@@ -1819,7 +1830,7 @@
                     </div>
 
                     <div style="padding:0.65rem 1rem; background:var(--slate-100); border-left:3px solid var(--slate-200); border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                        <div style="font-size:0.72rem; font-weight:700; color:var(--slate-700); letter-spacing:0.06em; margin-bottom:0.35rem;">💡 통계적 인사이트</div>
+                        <div style="font-size:0.72rem; font-weight:700; color:var(--slate-700); letter-spacing:0.06em; margin-bottom:0.35rem;">통계적 인사이트</div>
                         <div style="line-height:2; font-size:0.87rem; color:var(--slate-800);">
                             ${sizeInsight}<br>${ageInsight}
                         </div>
