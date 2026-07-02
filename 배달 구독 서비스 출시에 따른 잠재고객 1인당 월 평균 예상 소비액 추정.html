@@ -1310,7 +1310,10 @@
                     배달 구독 서비스의 잠재 고객을 <b>연령대</b>로 제한하거나 전체를 대상으로 표집 틀을 조정합니다.
                     특정 연령대로 표집 틀을 좁힐수록 편향(Bias)은 증가하지만 표본표준편차는 감소합니다.
                 </p>
-                <button class="select-all-btn" onclick="toggleSelectAllRegions()">모든 연령대 선택 해제</button>
+                <div style="display:flex; gap:0.4rem; margin-bottom:0.6rem;">
+                    <button class="select-all-btn" onclick="toggleSelectAllRegions()" style="flex:1;">모든 연령대 선택 해제</button>
+                    <button class="select-all-btn" onclick="resetPopulationData()" style="flex:1; background:var(--pink-50); color:var(--pink-600); border-color:var(--pink-300);">파라미터 초기화</button>
+                </div>
                 <div class="region-list" id="regionListContainer">
                     <!-- Javascript가 연령대 선택 체크박스 목록을 동적으로 렌더링합니다. -->
                 </div>
@@ -1329,16 +1332,36 @@
                         oninput="updateSampleSize(this.value)">
                 </div>
 
-                <!-- 1회 및 100회 추출 듀얼 버튼 제공 -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.8rem;">
+                <!-- 1회 및 지정회 연속 추출 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.6rem;">
                     <button class="btn-primary" onclick="drawNewSample()"
                         style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem;">
                         표본 추출 (1회)
                     </button>
-                    <button class="btn-primary" onclick="drawMultipleSamples(100)"
-                        style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem; background: var(--pink-600);">
-                        한번에 100하기
+                    <button class="btn-primary" id="batchDrawBtn" onclick="drawBatch()"
+                        style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.9rem; background: var(--pink-600);">
+                        한번에 100회 하기
                     </button>
+                </div>
+
+                <!-- 배치 횟수 설정 + 무한 모드 -->
+                <div style="background:var(--pink-50); border:1px solid var(--pink-200); border-radius:var(--radius-sm); padding:0.6rem 0.75rem; margin-bottom:0.6rem;">
+                    <div style="font-size:0.78rem; font-weight:700; color:var(--pink-600); margin-bottom:0.45rem; letter-spacing:0.04em;">배치 추출 횟수 설정</div>
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+                        <label style="font-size:0.8rem; color:var(--slate-700); white-space:nowrap;">횟수:</label>
+                        <input type="number" id="batchCountInput" value="100" min="1" max="99999"
+                            style="flex:1; padding:0.25rem 0.4rem; border:1px solid var(--pink-300); border-radius:4px; font-size:0.9rem; color:var(--slate-900); background:white;"
+                            oninput="updateBatchCount(this.value)" />
+                        <label style="font-size:0.8rem; color:var(--slate-700);">회</label>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <input type="checkbox" id="infiniteToggle" onchange="toggleInfiniteMode(this.checked)"
+                            style="width:15px; height:15px; accent-color:var(--pink-500); cursor:pointer;" />
+                        <label for="infiniteToggle" style="font-size:0.82rem; color:var(--slate-700); cursor:pointer;">∞ 무한 반복 (자동 정지 시까지 반복)</label>
+                    </div>
+                    <div id="infiniteStatusBadge" style="display:none; margin-top:0.4rem; font-size:0.78rem; color:var(--pink-600); font-weight:600; animation:pulse 1s infinite;">
+                        ● 무한 추출 진행 중... 버튼을 다시 눌러 정지
+                    </div>
                 </div>
 
                 <div class="toggle-group">
@@ -1578,11 +1601,19 @@
         // 표집 틀(Sampling Frame) 제한 기준을 워크시트 질문 2에 맞게 '연령대'로 설정한다.
         // 배달 구독 서비스의 잠재 고객은 지역보다 연령대에 따라 소비 성향이 크게 달라진다.
         const regionalData = [
-            { id: 'age20', name: '20대', mu: 52000, sigma: 14000, weight: 0.28, checked: true },
-            { id: 'age30', name: '30대', mu: 61000, sigma: 13000, weight: 0.32, checked: true },
-            { id: 'age40', name: '40대', mu: 47000, sigma: 11000, weight: 0.25, checked: true },
-            { id: 'age50plus', name: '50대이상', mu: 33000, sigma: 9500, weight: 0.15, checked: true }
+            { id: 'age20',    name: '20대',    mu: 52000, sigma: 14000, weight: 0.28, checked: true },
+            { id: 'age30',    name: '30대',    mu: 61000, sigma: 13000, weight: 0.32, checked: true },
+            { id: 'age40',    name: '40대',    mu: 47000, sigma: 11000, weight: 0.25, checked: true },
+            { id: 'age50plus',name: '50대이상', mu: 33000, sigma:  9500, weight: 0.15, checked: true }
         ];
+
+        // 원본 모수 값을 보존하는 스냅샷 (파라미터 초기화 버튼에 사용)
+        const originalRegionalData = JSON.parse(JSON.stringify(regionalData));
+
+        // 배치 추출 설정
+        let batchCount = 100;
+        let infiniteRunning = false;
+        let infiniteIntervalId = null;
 
         // Simulation parameters
         let sampleSize = 100;
@@ -1654,25 +1685,42 @@
             return num * std + mean;
         }
 
-        // Render Checkboxes
+        // Render Checkboxes (연령대별 체크박스 + 인라인 파라미터 편집 렌더링)
         function renderRegionSelector() {
             const container = document.getElementById('regionListContainer');
             container.innerHTML = '';
 
             regionalData.forEach((region, index) => {
                 const checkedAttr = region.checked ? 'checked' : '';
-                const percentage = (region.weight * 100).toFixed(1);
+                const weightPct = (region.weight * 100).toFixed(1);
 
                 const item = document.createElement('div');
                 item.className = 'region-item';
+                item.style.cssText = 'padding:0.55rem 0.6rem; background:var(--pink-50); border-radius:var(--radius-sm); border:1px solid var(--pink-200); margin-bottom:0.35rem;';
                 item.innerHTML = `
-                    <label class="region-checkbox-label">
+                    <label class="region-checkbox-label" style="margin-bottom:0.35rem;">
                         <input type="checkbox" id="chk-${region.id}" ${checkedAttr} onchange="handleRegionCheckboxChange('${region.id}', this.checked)">
-                        <span>${region.name}</span>
+                        <span style="font-weight:700; color:var(--slate-900);">${region.name}</span>
                     </label>
-                    <div class="region-meta">
-                        <div>비중: ${percentage}%</div>
-                        <div style="color: var(--pink-600); font-weight: 500;">μ=${region.mu.toLocaleString()}원</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.3rem; margin-top:0.3rem;">
+                        <div style="font-size:0.72rem;">
+                            <div style="color:var(--slate-600); margin-bottom:1px;">평균 μ (원)</div>
+                            <input type="number" value="${region.mu}" min="1000" max="9999999" step="1000"
+                                style="width:100%; padding:2px 4px; font-size:0.78rem; border:1px solid var(--pink-300); border-radius:3px; color:var(--slate-900);"
+                                oninput="updateRegionParam('${region.id}','mu',this.value)" />
+                        </div>
+                        <div style="font-size:0.72rem;">
+                            <div style="color:var(--slate-600); margin-bottom:1px;">표준편차 σ (원)</div>
+                            <input type="number" value="${region.sigma}" min="100" max="999999" step="500"
+                                style="width:100%; padding:2px 4px; font-size:0.78rem; border:1px solid var(--pink-300); border-radius:3px; color:var(--slate-900);"
+                                oninput="updateRegionParam('${region.id}','sigma',this.value)" />
+                        </div>
+                        <div style="font-size:0.72rem;">
+                            <div style="color:var(--slate-600); margin-bottom:1px;">비중 (%)</div>
+                            <input type="number" value="${weightPct}" min="0.1" max="100" step="0.1"
+                                style="width:100%; padding:2px 4px; font-size:0.78rem; border:1px solid var(--pink-300); border-radius:3px; color:var(--slate-900);"
+                                oninput="updateRegionParam('${region.id}','weight',this.value)" />
+                        </div>
                     </div>
                 `;
                 container.appendChild(item);
@@ -1896,13 +1944,89 @@
             updateCharts();
         }
 
-        // 한번에 지정된 횟수만큼 표본 추출을 연속 수행하는 함수
-        // 루프 중에는 silent 모드로 실행하여 렌더링 오버헤드를 막고, 마지막 추출 완료 시점에만 화면에 렌더링을 적용한다.
+        // 지정된 횟수만큼 표본 추출을 연속 수행하는 함수 (silent 모드로 UI 버퍼링)
         function drawMultipleSamples(count) {
-            for (let i = 0; i < count - 1; i++) {
-                drawNewSample(true);
-            }
+            for (let i = 0; i < count - 1; i++) { drawNewSample(true); }
             drawNewSample(false);
+        }
+
+        // 데이터 파라미터 실시간 수정 함수
+        function updateRegionParam(id, field, rawVal) {
+            const region = regionalData.find(r => r.id === id);
+            if (!region) return;
+            let val = parseFloat(rawVal);
+            if (isNaN(val) || val <= 0) return;
+            if (field === 'weight') {
+                region.weight = val / 100; // % 값으로 입력받는다
+            } else {
+                region[field] = val;
+            }
+            calculatePopulationMetrics();
+            updateCharts();
+        }
+
+        // 모집단 파라미터를 원본값으로 전수 복원하는 함수
+        function resetPopulationData() {
+            originalRegionalData.forEach((orig, i) => {
+                regionalData[i].mu     = orig.mu;
+                regionalData[i].sigma  = orig.sigma;
+                regionalData[i].weight = orig.weight;
+            });
+            renderRegionSelector();         // 입력필드에 원본값을 다시 채월다
+            calculatePopulationMetrics();
+            updateCharts();
+        }
+
+        // 배치 횟수 입력값 업데이트
+        function updateBatchCount(val) {
+            const n = parseInt(val);
+            if (!isNaN(n) && n >= 1) {
+                batchCount = n;
+                document.getElementById('batchDrawBtn').textContent = `한번에 ${n}회 하기`;
+            }
+        }
+
+        // 무한 모드 토글
+        function toggleInfiniteMode(checked) {
+            const input = document.getElementById('batchCountInput');
+            input.disabled = checked;
+            if (!checked && infiniteRunning) stopInfinite();
+        }
+
+        // 배치 버튼 통합 진입점: 실행 / 정지 토글
+        function drawBatch() {
+            const isInfinite = document.getElementById('infiniteToggle').checked;
+            const btn        = document.getElementById('batchDrawBtn');
+
+            if (isInfinite) {
+                if (infiniteRunning) {
+                    stopInfinite();
+                } else {
+                    infiniteRunning = true;
+                    btn.textContent = '■ 정지';
+                    btn.style.background = '#c0392b';
+                    document.getElementById('infiniteStatusBadge').style.display = 'block';
+                    // 배치횟수만큼를 한 사이클로 수행하고 잠시 대기하는 반복 루프
+                    function runCycle() {
+                        if (!infiniteRunning) return;
+                        drawMultipleSamples(batchCount);
+                        infiniteIntervalId = setTimeout(runCycle, 50);
+                    }
+                    runCycle();
+                }
+            } else {
+                drawMultipleSamples(batchCount);
+            }
+        }
+
+        // 무한 추출 중단
+        function stopInfinite() {
+            infiniteRunning = false;
+            if (infiniteIntervalId) { clearTimeout(infiniteIntervalId); infiniteIntervalId = null; }
+            const btn = document.getElementById('batchDrawBtn');
+            btn.textContent = `한번에 ${batchCount}회 하기`;
+            btn.style.background = 'var(--pink-600)';
+            document.getElementById('infiniteStatusBadge').style.display = 'none';
         }
 
         // Auto Draw Controls
