@@ -1,22 +1,76 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>배달 구독 서비스 출시에 따른 잠재고객 1인당 월 평균 예상 소비액 추정</title>
-    
+
     <!-- Fonts -->
     <style>
         /* Freesentation Font Face Definition (Base Font) */
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-1Thin.woff2') format('woff2'); font-weight: 100; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-2ExtraLight.woff2') format('woff2'); font-weight: 200; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-3Light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-5Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-8ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
-        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-9Black.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-1Thin.woff2') format('woff2');
+            font-weight: 100;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-2ExtraLight.woff2') format('woff2');
+            font-weight: 200;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-3Light.woff2') format('woff2');
+            font-weight: 300;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-5Medium.woff2') format('woff2');
+            font-weight: 500;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2');
+            font-weight: 600;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-8ExtraBold.woff2') format('woff2');
+            font-weight: 800;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Presentation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-9Black.woff2') format('woff2');
+            font-weight: 900;
+            font-display: swap;
+        }
 
         /* GanaChocolate Font Face Definition (Point/Title Font) */
         @font-face {
@@ -65,7 +119,7 @@
             --pink-600: #E31B50;
             --pink-700: #B80D3C;
             --pink-800: #8F052B;
-            
+
             --gold-100: #FDF6EC;
             --gold-200: #F9E5C9;
             --gold-400: #DFB175;
@@ -87,7 +141,7 @@
             --radius-sm: 8px;
             --radius-md: 16px;
             --radius-lg: 24px;
-            
+
             --shadow-sm: 0 4px 6px -1px rgba(227, 27, 80, 0.05), 0 2px 4px -1px rgba(227, 27, 80, 0.03);
             --shadow-md: 0 10px 15px -3px rgba(227, 27, 80, 0.08), 0 4px 6px -2px rgba(227, 27, 80, 0.05);
             --shadow-lg: 0 20px 25px -5px rgba(227, 27, 80, 0.12), 0 10px 10px -5px rgba(227, 27, 80, 0.06);
@@ -105,6 +159,7 @@
             background-color: var(--pink-200);
             color: var(--pink-900);
         }
+
         ::-moz-selection {
             background-color: var(--pink-200);
             color: var(--pink-900);
@@ -205,6 +260,7 @@
             transition: transform 0.2s;
             user-select: none;
         }
+
         .easter-egg-btn:hover {
             transform: scale(1.2) rotate(15deg);
         }
@@ -286,6 +342,7 @@
             outline: none;
             margin: 0.5rem 0;
         }
+
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -297,6 +354,7 @@
             box-shadow: 0 0 5px rgba(255, 62, 108, 0.5);
             transition: 0.1s;
         }
+
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.15);
         }
@@ -468,11 +526,11 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background-color: var(--pink-500);
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             transform: translateX(24px);
         }
 
@@ -683,6 +741,7 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
+
         .modal-close:hover {
             transform: rotate(90deg) scale(1.1);
         }
@@ -700,7 +759,7 @@
             font-size: 1.8rem;
             color: var(--pink-600);
             text-align: center;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         /* Visual representation of a Gacha */
@@ -738,13 +797,25 @@
             height: 1.125rem;
             border-radius: 50%;
             border: 0.0625rem solid var(--slate-900);
-            box-shadow: inset -0.125rem -0.125rem 0.1875rem rgba(0,0,0,0.2);
+            box-shadow: inset -0.125rem -0.125rem 0.1875rem rgba(0, 0, 0, 0.2);
         }
 
-        .ball-pink { background-color: #FF7088; }
-        .ball-yellow { background-color: #F9E5C9; }
-        .ball-blue { background-color: #8CE8E5; }
-        .ball-gold { background-color: #FFD700; animation: pulseGold 1.5s infinite; }
+        .ball-pink {
+            background-color: #FF7088;
+        }
+
+        .ball-yellow {
+            background-color: #F9E5C9;
+        }
+
+        .ball-blue {
+            background-color: #8CE8E5;
+        }
+
+        .ball-gold {
+            background-color: #FFD700;
+            animation: pulseGold 1.5s infinite;
+        }
 
         .gacha-crank {
             width: 2.5rem;
@@ -819,11 +890,26 @@
             box-shadow: var(--shadow-sm);
         }
 
-        .rarity-cosmic { background: linear-gradient(45deg, #a855f7, #ec4899, #f43f5e); animation: rainbow 3s infinite; }
-        .rarity-legendary { background: linear-gradient(135deg, #eab308, #dfb175); }
-        .rarity-epic { background: linear-gradient(135deg, #a855f7, #d946ef); }
-        .rarity-rare { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
-        .rarity-common { background: linear-gradient(135deg, #94a3b8, #cbd5e1); }
+        .rarity-cosmic {
+            background: linear-gradient(45deg, #a855f7, #ec4899, #f43f5e);
+            animation: rainbow 3s infinite;
+        }
+
+        .rarity-legendary {
+            background: linear-gradient(135deg, #eab308, #dfb175);
+        }
+
+        .rarity-epic {
+            background: linear-gradient(135deg, #a855f7, #d946ef);
+        }
+
+        .rarity-rare {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+        }
+
+        .rarity-common {
+            background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+        }
 
         .fortune-text {
             font-size: 1.05rem;
@@ -844,42 +930,100 @@
 
         /* Animations */
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes popUp {
-            to { transform: scale(1); opacity: 1; }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         @keyframes rattle {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            20% { transform: translate(-4px, 2px) rotate(-3deg); }
-            40% { transform: translate(4px, -2px) rotate(3deg); }
-            60% { transform: translate(-3px, -1px) rotate(-1.5deg); }
-            80% { transform: translate(3px, 1px) rotate(1.5deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            20% {
+                transform: translate(-4px, 2px) rotate(-3deg);
+            }
+
+            40% {
+                transform: translate(4px, -2px) rotate(3deg);
+            }
+
+            60% {
+                transform: translate(-3px, -1px) rotate(-1.5deg);
+            }
+
+            80% {
+                transform: translate(3px, 1px) rotate(1.5deg);
+            }
         }
 
         @keyframes bounceIn {
-            0% { transform: translateY(-50px) scale(0.3); opacity: 0; }
-            70% { transform: translateY(10px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
+            0% {
+                transform: translateY(-50px) scale(0.3);
+                opacity: 0;
+            }
+
+            70% {
+                transform: translateY(10px) scale(1.1);
+            }
+
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
 
         @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         @keyframes pulseGold {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,215,0,0.6)); }
-            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px rgba(255,215,0,0.9)); }
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.6));
+            }
+
+            50% {
+                transform: scale(1.2);
+                filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.9));
+            }
         }
 
         .machine-rattling {
@@ -893,6 +1037,7 @@
                 gap: 1.2rem;
                 padding: 0 1rem 2rem 1rem;
             }
+
             .sidebar {
                 flex-direction: column;
             }
@@ -905,36 +1050,45 @@
                 align-items: flex-start;
                 gap: 0.8rem;
             }
+
             .header-left {
                 width: 100%;
             }
+
             .header-right {
                 width: 100%;
                 justify-content: space-between;
             }
+
             h1 {
                 font-size: 1.35rem;
             }
+
             .subtitle {
                 font-size: 0.8rem;
             }
+
             .logo-emoji {
                 font-size: 1.8rem;
             }
+
             .metrics-grid {
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             }
+
             .sim-stats-panel {
                 flex-direction: column;
                 align-items: stretch;
                 padding: 1rem;
                 gap: 1rem;
             }
+
             .sim-stat-item {
                 text-align: left;
                 border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
                 padding-bottom: 0.8rem;
             }
+
             .sim-stat-item:last-child {
                 border-bottom: none;
                 padding-bottom: 0;
@@ -946,55 +1100,69 @@
                 padding: 0 0.5rem 1.5rem 0.5rem;
                 margin: 0.8rem auto;
             }
+
             header {
                 padding: 0.8rem;
             }
+
             h1 {
                 font-size: 1.15rem;
             }
+
             .subtitle {
                 font-size: 0.75rem;
             }
+
             .card {
                 padding: 1rem;
                 border-radius: var(--radius-sm);
             }
+
             .metrics-grid {
                 grid-template-columns: 1fr;
             }
+
             .metric-card {
                 padding: 1rem;
             }
+
             .chart-container {
                 height: 250px;
             }
+
             .modal-content {
                 padding: 1.2rem;
                 width: 95%;
             }
+
             .gacha-title {
                 font-size: 1.4rem;
             }
+
             .gacha-illustration {
                 width: 110px;
                 height: 160px;
             }
+
             .gacha-glass {
                 width: 86px;
                 height: 80px;
                 top: 10px;
                 left: 8px;
             }
+
             .gacha-ball {
                 width: 14px;
                 height: 14px;
             }
+
             .gacha-crank {
                 width: 32px;
                 height: 32px;
                 bottom: 35px;
                 left: calc(50% - 16px);
             }
+
             .capsule-drop {
                 width: 20px;
                 height: 20px;
@@ -1007,13 +1175,16 @@
             h1 {
                 font-size: 1.05rem;
             }
+
             .subtitle {
                 font-size: 0.7rem;
             }
+
             .tag {
                 font-size: 0.7rem;
                 padding: 0.2rem 0.5rem;
             }
+
             .chart-container {
                 height: 220px;
             }
@@ -1026,8 +1197,10 @@
             color: var(--pink-600);
             background-color: var(--pink-100);
             border-top: 1px solid var(--pink-200);
-            font-family: var(--font-point); /* 가나초콜릿체 */
-            font-size: 2.8rem; /* 푸터 상하 크높이만큼 크게 */
+            font-family: var(--font-point);
+            /* 가나초콜릿체 */
+            font-size: 2.8rem;
+            /* 푸터 상하 크높이만큼 크게 */
             line-height: 1.2;
             display: flex;
             align-items: center;
@@ -1074,19 +1247,23 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Intro Splash Screen -->
     <div id="splashScreen">
         <div class="splash-content">
-            <img id="splashGif" src="https://cdn.pixabay.com/animation/2026/05/10/12/07/12-07-49-893_512.gif" alt="Design the Data Loading" class="splash-gif" style="opacity: 0; transition: opacity 0.5s;">
+            <img id="splashGif" src="https://cdn.pixabay.com/animation/2026/05/10/12/07/12-07-49-893_512.gif"
+                alt="Design the Data Loading" class="splash-gif" style="opacity: 0; transition: opacity 0.5s;">
             <div id="splashText" class="splash-text"></div>
         </div>
     </div>
 
     <!-- Cherry Blossom Overlay Canvas -->
     <canvas id="blossomCanvas" layoutsubtree>
-        <div id="nativePetalDom" style="width: 24px; height: 32px; background-color: #FFB7C5; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; transform: rotate(-15deg); box-shadow: inset -2px -2px 5px rgba(255,255,255,0.4); border: 1px solid rgba(255, 112, 136, 0.4); position: absolute; left: -9999px; top: -9999px;"></div>
+        <div id="nativePetalDom"
+            style="width: 24px; height: 32px; background-color: #FFB7C5; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; transform: rotate(-15deg); box-shadow: inset -2px -2px 5px rgba(255,255,255,0.4); border: 1px solid rgba(255, 112, 136, 0.4); position: absolute; left: -9999px; top: -9999px;">
+        </div>
     </canvas>
 
     <!-- Header Section -->
@@ -1100,15 +1277,20 @@
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 0.8rem;">
             <!-- Dual Music Selector controls -->
-            <div class="music-control-box" style="display: flex; align-items: center; gap: 0.4rem; background: var(--pink-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--pink-200); box-shadow: var(--shadow-sm);">
-                <span style="font-size: 0.8rem; font-weight: 700; color: var(--pink-700); padding-right: 0.2rem; user-select: none;">배경음악:</span>
-                <button id="musicBtnGhibli" onclick="selectMusic('ghibli')" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
+            <div class="music-control-box"
+                style="display: flex; align-items: center; gap: 0.4rem; background: var(--pink-100); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--pink-200); box-shadow: var(--shadow-sm);">
+                <span
+                    style="font-size: 0.8rem; font-weight: 700; color: var(--pink-700); padding-right: 0.2rem; user-select: none;">배경음악:</span>
+                <button id="musicBtnGhibli" onclick="selectMusic('ghibli')"
+                    style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
                     🌸 지브리
                 </button>
-                <button id="musicBtnTrot" onclick="selectMusic('trot')" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
+                <button id="musicBtnTrot" onclick="selectMusic('trot')"
+                    style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: white; color: var(--pink-600); border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
                     트로트
                 </button>
-                <button onclick="stopMusic()" style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: var(--pink-500); color: white; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
+                <button onclick="stopMusic()"
+                    style="font-size: 0.85rem; padding: 0.35rem 0.7rem; border: none; background: var(--pink-500); color: white; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.2rem;">
                     정지
                 </button>
             </div>
@@ -1137,21 +1319,24 @@
             <!-- Sampling Size Slider Card -->
             <div class="card">
                 <h2 class="card-title">표본 추출 조건</h2>
-                
+
                 <div class="form-group">
                     <div class="form-label">
                         <span>표본 크기 (n)</span>
                         <span class="input-badge" id="sampleSizeDisplay">100</span>
                     </div>
-                    <input type="range" id="sampleSizeSlider" min="10" max="1000" step="5" value="100" oninput="updateSampleSize(this.value)">
+                    <input type="range" id="sampleSizeSlider" min="10" max="1000" step="5" value="100"
+                        oninput="updateSampleSize(this.value)">
                 </div>
 
                 <!-- 1회 및 100회 추출 듀얼 버튼 제공 -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.8rem;">
-                    <button class="btn-primary" onclick="drawNewSample()" style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem;">
+                    <button class="btn-primary" onclick="drawNewSample()"
+                        style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem;">
                         표본 추출 (1회)
                     </button>
-                    <button class="btn-primary" onclick="drawMultipleSamples(100)" style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem; background: var(--pink-600);">
+                    <button class="btn-primary" onclick="drawMultipleSamples(100)"
+                        style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem; background: var(--pink-600);">
                         연속 추출 (100회)
                     </button>
                 </div>
@@ -1169,7 +1354,8 @@
                         <span>자동 추출 주기 (초)</span>
                         <span class="input-badge" id="autoSpeedDisplay">1.0s</span>
                     </div>
-                    <input type="range" id="autoSpeedSlider" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updateAutoSpeed(this.value)">
+                    <input type="range" id="autoSpeedSlider" min="0.2" max="3.0" step="0.1" value="1.0"
+                        oninput="updateAutoSpeed(this.value)">
                 </div>
 
                 <button class="btn-secondary" onclick="resetHistory()">
@@ -1213,7 +1399,8 @@
                         <div class="interval-box">
                             <span class="interval-range" id="ci95Range">-</span>
                             <span class="interval-status" id="ci95Status">
-                                <span class="status-badge" style="background-color: var(--slate-200); color: var(--slate-800);">대기 중</span>
+                                <span class="status-badge"
+                                    style="background-color: var(--slate-200); color: var(--slate-800);">대기 중</span>
                             </span>
                         </div>
                     </div>
@@ -1226,7 +1413,8 @@
                         <div class="interval-box">
                             <span class="interval-range" id="ci99Range">-</span>
                             <span class="interval-status" id="ci99Status">
-                                <span class="status-badge" style="background-color: var(--slate-200); color: var(--slate-800);">대기 중</span>
+                                <span class="status-badge"
+                                    style="background-color: var(--slate-200); color: var(--slate-800);">대기 중</span>
                             </span>
                         </div>
                     </div>
@@ -1258,7 +1446,8 @@
             </div>
 
             <!-- Charts Section Grid (2x2 Grid Layout) -->
-            <div class="charts-grid-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: 1.5rem;">
+            <div class="charts-grid-layout"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: 1.5rem;">
                 <!-- Chart 1: Distributions -->
                 <div class="card">
                     <h3 class="card-title">표본 분포 vs 모집단 분포</h3>
@@ -1274,7 +1463,8 @@
                 <div class="card">
                     <h3 class="card-title">신뢰구간 추정 역사 (최근 30회)</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
-                        각 추출에서의 95% 신뢰구간 범위를 표시합니다. 세로선은 참 모평균(μ)을 나타내며, 참값을 포함하지 못한 구간은 <span style="color: var(--danger); font-weight: bold;">빨간색</span>으로 표시됩니다.
+                        각 추출에서의 95% 신뢰구간 범위를 표시합니다. 세로선은 참 모평균(μ)을 나타내며, 참값을 포함하지 못한 구간은 <span
+                            style="color: var(--danger); font-weight: bold;">빨간색</span>으로 표시됩니다.
                     </p>
                     <div class="chart-container">
                         <canvas id="ciHistoryChart"></canvas>
@@ -1318,7 +1508,8 @@
                 <div class="card">
                     <h3 class="card-title">표준오차 vs 표본 크기 (σ/√n 곡선)</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
-                        n이 커질수록 SE(= σ/√n)가 감소하는 이론 곡선입니다. 현재: <span id="seVsN_label" style="color: var(--pink-600); font-weight: bold;">대기 중</span>
+                        n이 커질수록 SE(= σ/√n)가 감소하는 이론 곡선입니다. 현재: <span id="seVsN_label"
+                            style="color: var(--pink-600); font-weight: bold;">대기 중</span>
                     </p>
                     <div class="chart-container">
                         <canvas id="seVsNChart"></canvas>
@@ -1337,11 +1528,13 @@
     <div class="modal-overlay" id="gachaModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeGachaModal()">×</button>
-            <h2 class="gacha-title"><span class="no-select-emoji">🌸</span> 비밀의 벚꽃 뽑기 머신 <span class="no-select-emoji">🌸</span></h2>
-            <p style="font-size: 0.85rem; color: var(--slate-700); text-align: center; margin-top: 0.4rem; padding: 0 1rem;">
+            <h2 class="gacha-title"><span class="no-select-emoji">🌸</span> 비밀의 벚꽃 뽑기 머신 <span
+                    class="no-select-emoji">🌸</span></h2>
+            <p
+                style="font-size: 0.85rem; color: var(--slate-700); text-align: center; margin-top: 0.4rem; padding: 0 1rem;">
                 통계적 행운을 테스트해보세요! 레버를 누르면 무작위 크기의 표본을 뽑아 참값과의 거리를 측정하고 오늘의 통계 행운을 점쳐줍니다.
             </p>
-            
+
             <div class="gacha-machine-container">
                 <div class="gacha-illustration" id="gachaMachine">
                     <div class="gacha-glass">
@@ -1368,7 +1561,8 @@
                     </h3>
                     <div style="font-size: 0.9rem; color: var(--slate-700); margin-bottom: 0.5rem;">
                         실제 참값: <span id="gachaPopMean" style="font-weight: bold;">-</span><br>
-                        Gacha 표본 평균: <span id="gachaSampleMean" style="font-weight: bold; color: var(--pink-600);">-</span><br>
+                        Gacha 표본 평균: <span id="gachaSampleMean"
+                            style="font-weight: bold; color: var(--pink-600);">-</span><br>
                         오차율: <span id="gachaError" style="font-weight: bold;">-</span>
                     </div>
                     <div class="fortune-text" id="gachaFortune">오늘의 통계적 조언</div>
@@ -1409,12 +1603,12 @@
         let currentSampleSD = 0;
 
         // 차트 인스턴스 참조: 전역 범위에서 관리하여 drawNewSample() 호출마다 재사용한다.
-        let distributionChart    = null; // Chart 1: 표본 분포 히스토그램 vs 이론 밀도 함수
-        let ciHistoryChart       = null; // Chart 2: 신뢰구간 추정 역사 (최근 30회 부동 막대)
-        let regionalChart        = null; // Chart 3: 연령대별 참값 평균 비교 막대 그래프
-        let convergenceChart     = null; // Chart 4: 대수의 법칙 — 누적 표본평균 수렴도
-        let samplingDistChart    = null; // Chart 5: 표집분포 — CLT 히스토그램 (신규)
-        let seVsNChart           = null; // Chart 6: SE vs n 역제곱근 이론 곡선 (신규)
+        let distributionChart = null; // Chart 1: 표본 분포 히스토그램 vs 이론 밀도 함수
+        let ciHistoryChart = null; // Chart 2: 신뢰구간 추정 역사 (최근 30회 부동 막대)
+        let regionalChart = null; // Chart 3: 연령대별 참값 평균 비교 막대 그래프
+        let convergenceChart = null; // Chart 4: 대수의 법칙 — 누적 표본평균 수렴도
+        let samplingDistChart = null; // Chart 5: 표집분포 — CLT 히스토그램 (신규)
+        let seVsNChart = null; // Chart 6: SE vs n 역제곱근 이론 곡선 (신규)
 
         // Title click counter for Easter egg
         let titleClickCount = 0;
@@ -1424,13 +1618,13 @@
             renderRegionSelector();
             calculatePopulationMetrics();
             initCharts();
-            
+
             // Draw initial sample
             drawNewSample();
 
             // GIF 이미지가 완전히 로딩 완료되어 픽셀 데이터가 확보되어야 스플래시와 모든 타이머/애니메이션이 재생을 개시하도록 설계한다.
             const splashGif = document.getElementById('splashGif');
-            
+
             function startOpeningSequence() {
                 if (splashGif) splashGif.style.opacity = '1';
                 runSplashScreen();
@@ -1454,8 +1648,8 @@
         // Box-Muller transform for normal distribution
         function randn_bm(mean, std) {
             let u = 0, v = 0;
-            while(u === 0) u = Math.random(); 
-            while(v === 0) v = Math.random();
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
             let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
             return num * std + mean;
         }
@@ -1468,7 +1662,7 @@
             regionalData.forEach((region, index) => {
                 const checkedAttr = region.checked ? 'checked' : '';
                 const percentage = (region.weight * 100).toFixed(1);
-                
+
                 const item = document.createElement('div');
                 item.className = 'region-item';
                 item.innerHTML = `
@@ -1503,7 +1697,7 @@
 
             calculatePopulationMetrics();
             updateSelectAllBtnText();
-            
+
             // Redraw sample when settings change
             drawNewSample();
         }
@@ -1573,7 +1767,7 @@
         function updateSampleSize(val) {
             sampleSize = parseInt(val);
             document.getElementById('sampleSizeDisplay').innerText = sampleSize;
-            
+
             // Draw a fresh sample
             drawNewSample();
         }
@@ -1688,10 +1882,10 @@
 
             // Update history indicators
             document.getElementById('runCountValue').innerHTML = `<span>${historyData.totalRuns}</span> 회`;
-            
+
             const rate95 = (historyData.success95Count / historyData.totalRuns * 100).toFixed(1);
             const rate99 = (historyData.success99Count / historyData.totalRuns * 100).toFixed(1);
-            
+
             document.getElementById('ci95Coverage').innerHTML = `<span>${rate95}</span>%`;
             document.getElementById('ci99Coverage').innerHTML = `<span>${rate99}</span>%`;
 
@@ -1738,7 +1932,7 @@
         function updateAutoSpeed(val) {
             autoDrawSpeed = parseFloat(val);
             document.getElementById('autoSpeedDisplay').innerText = `${autoDrawSpeed.toFixed(1)}s`;
-            
+
             // Restart interval with new speed if auto drawing is active
             if (document.getElementById('autoDrawToggle').checked) {
                 startAutoDraw();
@@ -1769,34 +1963,34 @@
             if (!container) return;
 
             // --- 핵심 통계치 계산 ---
-            const selected    = regionalData.filter(r => r.checked);
+            const selected = regionalData.filter(r => r.checked);
             const regionNames = selected.map(r => r.name).join(', ');
-            const se          = currentSampleSD / Math.sqrt(sampleSize); // 표준오차(SE)
+            const se = currentSampleSD / Math.sqrt(sampleSize); // 표준오차(SE)
 
-            const m95    = 1.96 * se;
+            const m95 = 1.96 * se;
             const ci95Lo = Math.max(0, currentSampleMean - m95);
             const ci95Hi = currentSampleMean + m95;
-            const ok95   = truePopMean >= ci95Lo && truePopMean <= ci95Hi;
+            const ok95 = truePopMean >= ci95Lo && truePopMean <= ci95Hi;
 
-            const m99    = 2.576 * se;
+            const m99 = 2.576 * se;
             const ci99Lo = Math.max(0, currentSampleMean - m99);
             const ci99Hi = currentSampleMean + m99;
-            const ok99   = truePopMean >= ci99Lo && truePopMean <= ci99Hi;
+            const ok99 = truePopMean >= ci99Lo && truePopMean <= ci99Hi;
 
-            const err     = Math.abs(truePopMean - currentSampleMean);
-            const errPct  = (err / truePopMean * 100).toFixed(2);
-            const dir     = currentSampleMean > truePopMean ? '높습니다' : '낮습니다';
+            const err = Math.abs(truePopMean - currentSampleMean);
+            const errPct = (err / truePopMean * 100).toFixed(2);
+            const dir = currentSampleMean > truePopMean ? '높습니다' : '낮습니다';
 
-            const rate95  = historyData.totalRuns > 0
+            const rate95 = historyData.totalRuns > 0
                 ? (historyData.success95Count / historyData.totalRuns * 100).toFixed(1) : '0.0';
-            const rate99  = historyData.totalRuns > 0
+            const rate99 = historyData.totalRuns > 0
                 ? (historyData.success99Count / historyData.totalRuns * 100).toFixed(1) : '0.0';
 
             // --- 인사이트 문장: 표본 크기에 따른 맥락적 진단 ---
             let sizeInsight;
-            if      (sampleSize < 100)  sizeInsight = `표본 크기(n)가 <b>소규모(${sampleSize}명)</b>이므로 표준오차가 크게 나타납니다. 정밀도를 높이려면 더 많은 표본이 필요합니다.`;
+            if (sampleSize < 100) sizeInsight = `표본 크기(n)가 <b>소규모(${sampleSize}명)</b>이므로 표준오차가 크게 나타납니다. 정밀도를 높이려면 더 많은 표본이 필요합니다.`;
             else if (sampleSize >= 300) sizeInsight = `표본 크기(n)가 <b>대규모(${sampleSize}명)</b>로 확보되어 표준오차가 안정적으로 최소화되었습니다.`;
-            else                        sizeInsight = `표본 크기(n)가 <b>적정 규모(${sampleSize}명)</b>로, 중심극한정리의 전형적인 표집 양상이 나타납니다.`;
+            else sizeInsight = `표본 크기(n)가 <b>적정 규모(${sampleSize}명)</b>로, 중심극한정리의 전형적인 표집 양상이 나타납니다.`;
 
             // --- 인사이트 문장: 연령대 선택에 따른 편향 트레이드오프 진단 ---
             const ageInsight = selected.length < regionalData.length
@@ -1807,9 +2001,9 @@
             let coverageDiag = '';
             if (historyData.totalRuns >= 20) {
                 const diff = Math.abs(parseFloat(rate95) - 95);
-                if      (diff <= 3) coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)에 <b>근접하게 수렴</b>하고 있습니다.`;
+                if (diff <= 3) coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)에 <b>근접하게 수렴</b>하고 있습니다.`;
                 else if (diff <= 8) coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)으로 수렴 중입니다. 시행이 늘수록 더 가까워집니다.`;
-                else                coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)과 다소 차이가 있습니다. 시행 횟수 증가 시 수렴합니다.`;
+                else coverageDiag = `95% 커버리지(<b>${rate95}%</b>)가 이론값(95%)과 다소 차이가 있습니다. 시행 횟수 증가 시 수렴합니다.`;
             }
 
             // --- 성공/실패 인라인 뱃지 헬퍼 ---
@@ -1889,21 +2083,21 @@
         // 오디오 컨텍스트 및 꿈결 같은 에코 딜레이 루프 노드 활성화
         function initAudio() {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
+
             masterGain = audioCtx.createGain();
             masterGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            
+
             // 음악 상자(Music Box)의 풍성하고 아련한 공명을 표현하기 위한 딜레이 노드 설계
             delayNode = audioCtx.createDelay(1.0);
             delayNode.delayTime.setValueAtTime(0.4, audioCtx.currentTime);
-            
+
             const feedback = audioCtx.createGain();
             feedback.gain.setValueAtTime(0.35, audioCtx.currentTime);
-            
+
             // 딜레이 출력 신호를 피드백 노드를 거쳐 다시 입력으로 순환
             delayNode.connect(feedback);
             feedback.connect(delayNode);
-            
+
             // 최종 출력을 오디오 출력선에 연결
             delayNode.connect(masterGain);
             masterGain.connect(audioCtx.destination);
@@ -1912,31 +2106,31 @@
         // 특정 주파수와 볼륨 포인트를 소리 내어주는 모노 신디사이저 엔진
         function playNodeSound(freq, startTime, duration, type = 'triangle', volume = 0.08) {
             if (!audioCtx) return;
-            
+
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             const filter = audioCtx.createBiquadFilter();
-            
+
             osc.type = type;
             osc.frequency.setValueAtTime(freq, startTime);
-            
+
             // 지브리 멜로디의 몽글한 음색을 위해 고주파 배음을 커트해주는 로우패스 필터링
             filter.type = 'lowpass';
             filter.frequency.setValueAtTime(type === 'sine' ? 350 : 750, startTime);
-            
+
             // 부드러운 시작(Attack)과 아련한 잔향(Release)을 그리는 볼륨 엔벨로프 곡선
             gainNode.gain.setValueAtTime(0, startTime);
             gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.04);
             gainNode.gain.setValueAtTime(volume, startTime + duration - 0.08);
             gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-            
+
             osc.connect(filter);
             filter.connect(gainNode);
-            
+
             // 딜레이 노드로 연결하여 공간감을 얹고, 다이렉트 신호를 masterGain에도 병렬 라우팅
             gainNode.connect(delayNode);
             gainNode.connect(masterGain);
-            
+
             osc.start(startTime);
             osc.stop(startTime + duration);
         }
@@ -1955,10 +2149,10 @@
         // Web Audio API 오디오 스케줄링 전용 타이머 루프
         function musicScheduler() {
             if (!isPlayingMusic) return;
-            
+
             while (nextNoteTime < audioCtx.currentTime + 0.1) {
                 scheduleMusicStep(currentStep, nextNoteTime);
-                
+
                 // 트로트는 빠른 템포(비트 간격 180ms), 지브리는 몽글한 템포(300ms)로 분리 설정한다.
                 const stepIncrement = musicType === 'trot' ? 0.18 : 0.3;
                 nextNoteTime += stepIncrement;
@@ -1972,14 +2166,14 @@
         function scheduleMusicStep(step, time) {
             const chordIdx = Math.floor(step / 8) % 4;
             const stepInChord = step % 8;
-            
+
             if (musicType === 'ghibli') {
                 // 1. 코드 마디 첫 박자에 묵직하고 따스한 근음(Base) 연출
                 if (stepInChord === 0) {
                     const bassFreq = 440 * Math.pow(2, (chordRoots[chordIdx] - 69) / 12);
                     playNodeSound(bassFreq, time, 2.2, 'sine', 0.12);
                 }
-                
+
                 // 2. 부드럽게 반주 화음을 아르페지오로 분산 연주
                 if (stepInChord % 2 === 0) {
                     const noteIdx = (stepInChord / 2) % 3;
@@ -1987,7 +2181,7 @@
                     const arpeggioFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
                     playNodeSound(arpeggioFreq, time, 0.7, 'sine', 0.04);
                 }
-                
+
                 // 3. 서정적이고 아련한 지브리 스타일 멜로디 전개
                 const melodyIdx = step % melodyNotes.length;
                 const melodyMidi = melodyNotes[melodyIdx];
@@ -2000,10 +2194,10 @@
                 // 전체 스텝을 384스텝 단위 루프(약 1분)로 묶고, 64스텝(약 11초)마다 새로운 파트를 레이어링한다.
                 const loopStep = step % 384;
                 const section = Math.floor(loopStep / 64); // 0 ~ 5 단계의 고조부
-                
+
                 // 클라이맥스 하이라이트(Section 4 이상: 스텝 256 이상)에 진입하면 B minor로 조바꿈(+2반음)되어 축제의 흥을 극대화한다.
                 const transpose = section >= 4 ? 2 : 0;
-                
+
                 // 1. 쿵짝 베이스라인 (모든 섹션 기본 가동)
                 if (stepInChord % 2 === 0) {
                     const bassRoot = trotChordRoots[chordIdx] + transpose;
@@ -2011,7 +2205,7 @@
                     const bassFreq = 440 * Math.pow(2, (bassMidi - 69) / 12);
                     playNodeSound(bassFreq, time, 0.14, 'sawtooth', 0.12);
                 }
-                
+
                 // 2. 오프비트 스타브 코드 반주 (Section 1 이상부터 추가 - 축제 비트 가세)
                 if (section >= 1) {
                     if (stepInChord === 0 || stepInChord === 3 || stepInChord === 5) {
@@ -2021,17 +2215,17 @@
                         });
                     }
                 }
-                
+
                 // 3. 네온사인 고주파 아르페지오 (Section 2 이상부터 추가 - 현란한 네온 신스 탑재)
                 if (section >= 2) {
                     if (stepInChord % 2 === 1) {
                         const neonNotes = trotChords[chordIdx];
-                        const neonMidi = neonNotes[stepInChord % 3] + 24 + transpose; 
+                        const neonMidi = neonNotes[stepInChord % 3] + 24 + transpose;
                         const neonFreq = 440 * Math.pow(2, (neonMidi - 69) / 12);
                         playNodeSound(neonFreq, time, 0.08, 'sawtooth', 0.02);
                     }
                 }
-                
+
                 // 4. 알고리즘 기반 계속 변화하는 표면 멜로디 (메인 보이스)
                 const primaryMidi = getDynamicTrotNote(step, chordIdx, transpose);
                 if (primaryMidi !== null) {
@@ -2057,17 +2251,17 @@
         function getDynamicTrotNote(step, chordIdx, transpose = 0) {
             const baseRoot = trotChordRoots[chordIdx] + transpose;
             const pentatonicIntervals = [0, 3, 5, 7, 10, 12, 15, 17, 19, 22, 24];
-            
+
             // 삼각함수로 멜로디의 높낮이를 주기적으로 자동 계산 (계속 바뀌는 멜로디 실현)
             const seed = Math.sin(step * 0.35) * 6 + Math.cos(step * 0.15) * 4;
             const noteIndex = Math.abs(Math.floor(seed)) % pentatonicIntervals.length;
-            
+
             const midiNote = baseRoot + 24 + pentatonicIntervals[noteIndex];
-            
+
             // 싱코페이션(쉼표) 리듬 패턴 배치
             const rhythmPattern = [1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0];
             if (rhythmPattern[step % 16] === 0) return null;
-            
+
             return midiNote;
         }
 
@@ -2310,7 +2504,7 @@
                         },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     if (context.datasetIndex === 0) {
                                         const val = context.raw;
                                         return `신뢰구간: ${Math.round(val[0]).toLocaleString()}원 ~ ${Math.round(val[1]).toLocaleString()}원`;
@@ -2625,14 +2819,14 @@
             for (let i = 0; i < maxVal; i += binSize) {
                 const midpoint = i + (binSize / 2);
                 let density = 0;
-                
+
                 activeRegions.forEach(r => {
                     const normWeight = r.weight / sumWeights;
-                    const val = (1 / (r.sigma * Math.sqrt(2 * Math.PI))) * 
-                                Math.exp(-0.5 * Math.pow((midpoint - r.mu) / r.sigma, 2));
+                    const val = (1 / (r.sigma * Math.sqrt(2 * Math.PI))) *
+                        Math.exp(-0.5 * Math.pow((midpoint - r.mu) / r.sigma, 2));
                     density += normWeight * val;
                 });
-                
+
                 lineData.push(density);
             }
 
@@ -2645,14 +2839,14 @@
             // Show recent runs (up to 30)
             const recentRuns = historyData.runs.slice(-30);
             const ciLabels = recentRuns.map(run => `${run.id}회차`);
-            
+
             // Floating bars: [[lower, upper], ...]
             const ciBars = recentRuns.map(run => [run.lower95, run.upper95]);
             const sampleMeans = recentRuns.map((run, index) => ({ x: run.sampleMean, y: index }));
             const popMeans = recentRuns.map((run, index) => ({ x: run.popMean, y: index }));
-            
+
             // Set bar colors: light green if contains true mean, bright rose-pink if not
-            const barColors = recentRuns.map(run => 
+            const barColors = recentRuns.map(run =>
                 run.contains95 ? 'rgba(46, 196, 182, 0.65)' : 'rgba(231, 29, 54, 0.75)'
             );
 
@@ -2684,7 +2878,7 @@
             regionalChart.data.datasets[0].borderColor = regBorders;
             regionalChart.data.datasets[1].data = popMeanLine;
             regionalChart.data.datasets[2].data = sampleMeanLine;
-            
+
             regionalChart.update('none');
 
             // 4. Update Convergence Chart (Chart 4)
@@ -2707,15 +2901,15 @@
             //    CLT 이론 정규분포 N(μ, σ²/n)을 빈도 스케일로 변환하여 오버레이한다.
             // ============================================================================
             if (samplingDistChart && historyData.runs.length >= 5) {
-                const thSE      = truePopSD / Math.sqrt(sampleSize); // 이론적 표준오차
+                const thSE = truePopSD / Math.sqrt(sampleSize); // 이론적 표준오차
                 const halfRange = 4 * thSE;                           // ±4σ 고정 범위로 축이 안정적으로 유지됨
-                const rMin      = truePopMean - halfRange;
-                const rMax      = truePopMean + halfRange;
-                const BINS      = 20;
-                const binSz     = (rMax - rMin) / BINS;
+                const rMin = truePopMean - halfRange;
+                const rMax = truePopMean + halfRange;
+                const BINS = 20;
+                const binSz = (rMax - rMin) / BINS;
 
-                const sdLabels  = [];
-                const sdBars    = Array(BINS).fill(0);
+                const sdLabels = [];
+                const sdBars = Array(BINS).fill(0);
 
                 for (let i = 0; i < BINS; i++) {
                     sdLabels.push(`${Math.round((rMin + i * binSz) / 1000)}k`);
@@ -2728,15 +2922,15 @@
                 });
 
                 // CLT 이론 곡선: density × (총시행 수 × 빈 너비)로 빈도 스케일 역산
-                const N       = historyData.runs.length;
-                const sdLine  = sdLabels.map((_, i) => {
-                    const mid     = rMin + (i + 0.5) * binSz;
+                const N = historyData.runs.length;
+                const sdLine = sdLabels.map((_, i) => {
+                    const mid = rMin + (i + 0.5) * binSz;
                     const density = Math.exp(-0.5 * ((mid - truePopMean) / thSE) ** 2)
-                                  / (thSE * Math.sqrt(2 * Math.PI));
+                        / (thSE * Math.sqrt(2 * Math.PI));
                     return density * N * binSz;
                 });
 
-                samplingDistChart.data.labels           = sdLabels;
+                samplingDistChart.data.labels = sdLabels;
                 samplingDistChart.data.datasets[0].data = sdBars;
                 samplingDistChart.data.datasets[1].data = sdLine;
                 samplingDistChart.update('none');
@@ -2785,7 +2979,7 @@
             const svgBlob = new Blob([htmlContent], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(svgBlob);
             petalHtmlImage = new Image();
-            petalHtmlImage.onload = function() {
+            petalHtmlImage.onload = function () {
                 URL.revokeObjectURL(url);
             };
             petalHtmlImage.src = url;
@@ -2824,7 +3018,7 @@
                 blossomCtx.translate(this.x, this.y);
                 blossomCtx.rotate(this.angle * Math.PI / 180);
                 blossomCtx.globalAlpha = this.opacity;
-                
+
                 // Chrome's experimental HTML-in-Canvas API (progressive enhancement)
                 // 만약 브라우저가 최신 오리진 트라이얼 API인 drawElementImage를 지원하면, DOM 요소를 직접 캔버스 내부에 투영하여 렌더링한다.
                 if (blossomCtx.drawElementImage) {
@@ -2934,7 +3128,7 @@
             const machine = document.getElementById('gachaMachine');
             const crank = document.getElementById('gachaCrank');
             const capsule = document.getElementById('gachaCapsule');
-            
+
             machine.classList.add('machine-rattling');
             crank.style.transform = 'rotate(360deg)';
             capsule.style.display = 'none';
@@ -2944,7 +3138,7 @@
                 // Remove rattle animation class
                 machine.classList.remove('machine-rattling');
                 crank.style.transform = 'rotate(0deg)';
-                
+
                 // Roll out capsule
                 capsule.style.display = 'block';
                 gachaSpinning = false;
@@ -2958,7 +3152,7 @@
 
             // Generate a random gacha sample size
             const luckyN = Math.floor(Math.random() * 200) + 15; // 15 to 215
-            
+
             // Draw a temporary gacha sample
             const selected = regionalData.filter(r => r.checked);
             const sumWeights = selected.reduce((sum, r) => sum + r.weight, 0);
@@ -3024,7 +3218,7 @@
             document.getElementById('gachaPopMean').innerText = `${Math.round(truePopMean).toLocaleString()}원`;
             document.getElementById('gachaSampleMean').innerText = `${Math.round(tempMean).toLocaleString()}원`;
             document.getElementById('gachaError').innerText = `${Math.round(diffError).toLocaleString()}원 (오차율 ${percentError.toFixed(3)}%)`;
-            
+
             document.getElementById('gachaFortune').innerText = fortuneText;
             document.getElementById('gachaDetail').innerText = `[상세분석] ${detailText}`;
 
@@ -3032,4 +3226,5 @@
         }
     </script>
 </body>
+
 </html>
