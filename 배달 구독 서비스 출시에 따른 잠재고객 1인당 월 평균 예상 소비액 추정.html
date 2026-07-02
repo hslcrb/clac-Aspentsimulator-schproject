@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>배달 구독 서비스 출시에 따른 잠재고객 1인당 월 평균 예상 소비액 추정</title>
+    
+    <!-- Fonts -->
+    <style>
+        /* Freesentation Font Face Definition (Base Font) */
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-1Thin.woff2') format('woff2'); font-weight: 100; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-2ExtraLight.woff2') format('woff2'); font-weight: 200; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-3Light.woff2') format('woff2'); font-weight: 300; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-5Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-6SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-8ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+        @font-face { font-family: 'Presentation'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-9Black.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+
+        /* GanaChocolate Font Face Definition (Point/Title Font) */
+        @font-face {
+            font-family: 'GanaChocolate';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ghanachoco.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+    </style>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Vanilla CSS Styling -->
+    <style>
+        :root {
+            /* Palette: Premium Pink & Rose Gold */
+            --pink-50: #FFF5F6;
+            --pink-100: #FFE4E8;
+            --pink-200: #FFCAD3;
+            --pink-300: #FFA2B2;
+            --pink-400: #FF7088;
+            --pink-500: #FF3E6C;
+            --pink-600: #E31B50;
+            --pink-700: #B80D3C;
+            --pink-800: #8F052B;
+            
+            --gold-100: #FDF6EC;
+            --gold-200: #F9E5C9;
+            --gold-400: #DFB175;
+            --gold-600: #B38646;
+
+            --slate-50: #FAF8F9;
+            --slate-100: #F5EEF0;
+            --slate-200: #EADEE1;
+            --slate-700: #5C474C;
+            --slate-800: #423035;
+            --slate-900: #2C1D21;
+
+            --success: #2EC4B6;
+            --danger: #E71D36;
+
+            --font-base: 'Presentation', sans-serif;
+            --font-point: 'GanaChocolate', serif;
+
+            --radius-sm: 8px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            
+            --shadow-sm: 0 4px 6px -1px rgba(227, 27, 80, 0.05), 0 2px 4px -1px rgba(227, 27, 80, 0.03);
+            --shadow-md: 0 10px 15px -3px rgba(227, 27, 80, 0.08), 0 4px 6px -2px rgba(227, 27, 80, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(227, 27, 80, 0.12), 0 10px 10px -5px rgba(227, 27, 80, 0.06);
+            --shadow-glow: 0 0 15px rgba(255, 62, 108, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-base);
+            background-color: var(--pink-50);
+            color: var(--slate-900);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Easter Egg Canvas overlay */
+        #blossomCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            display: none;
+        }
+
+        header {
+            background: linear-gradient(135deg, rgba(255, 228, 232, 0.9) 0%, rgba(255, 202, 211, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--pink-200);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-emoji {
+            font-size: 2.2rem;
+            animation: bounce 3s infinite ease-in-out;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .title-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-family: var(--font-point);
+            font-size: 1.6rem;
+            color: var(--slate-900);
+            letter-spacing: -0.5px;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--pink-600);
+            font-weight: 500;
+            margin-top: 0.2rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tag {
+            background-color: var(--pink-100);
+            color: var(--pink-700);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--pink-200);
+        }
+
+        /* Easter egg trigger item */
+        .easter-egg-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            user-select: none;
+        }
+        .easter-egg-btn:hover {
+            transform: scale(1.2) rotate(15deg);
+        }
+
+        /* Main Layout */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 1.5rem;
+            max-width: 1600px;
+            width: 100%;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem 3rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        /* Card Component Styling */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--pink-100);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--pink-200);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-family: var(--font-point);
+            font-size: 1.15rem;
+            color: var(--slate-900);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--pink-100);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Control Panel (Sidebar) */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+            color: var(--slate-800);
+        }
+
+        .input-badge {
+            background-color: var(--pink-500);
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Sliders */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--pink-200);
+            border-radius: 5px;
+            outline: none;
+            margin: 0.5rem 0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--pink-500);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(255, 62, 108, 0.5);
+            transition: 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* Region Selectors */
+        .region-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background-color: var(--pink-50);
+            padding: 0.8rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--pink-100);
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .region-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.4rem 0.6rem;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .region-item:hover {
+            background-color: var(--pink-100);
+        }
+
+        .region-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .region-meta {
+            font-size: 0.8rem;
+            color: var(--slate-700);
+            text-align: right;
+        }
+
+        .select-all-btn {
+            background-color: white;
+            border: 1px solid var(--pink-300);
+            color: var(--pink-600);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 0.6rem;
+            text-align: center;
+        }
+
+        .select-all-btn:hover {
+            background-color: var(--pink-100);
+            color: var(--pink-700);
+        }
+
+        /* Buttons styling */
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--pink-400) 0%, var(--pink-600) 100%);
+            color: white;
+            border: none;
+            padding: 0.9rem;
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+            background: linear-gradient(135deg, var(--pink-500) 0%, var(--pink-700) 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: white;
+            border: 1px solid var(--pink-300);
+            color: var(--pink-600);
+            padding: 0.7rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--pink-100);
+            color: var(--pink-700);
+        }
+
+        /* Toggle Switches */
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-top: 1px dashed var(--pink-200);
+            border-bottom: 1px dashed var(--pink-200);
+            margin: 0.8rem 0;
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--slate-800);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--pink-200);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--pink-500);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Main Content Grid */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Key Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 245, 246, 0.9) 100%);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            border: 1px solid var(--pink-100);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--pink-400);
+        }
+
+        .metric-card.accent::before {
+            background: linear-gradient(to bottom, var(--gold-400), var(--gold-600));
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-family: var(--font-point);
+            font-size: 1.5rem;
+            color: var(--slate-900);
+            margin-bottom: 0.3rem;
+            word-break: break-all;
+        }
+
+        .metric-desc {
+            font-size: 0.75rem;
+            color: var(--pink-600);
+            font-weight: 500;
+        }
+
+        /* Confidence Interval Box */
+        .interval-box {
+            background: white;
+            border: 1px solid var(--pink-200);
+            border-radius: var(--radius-sm);
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .interval-range {
+            font-weight: 700;
+            color: var(--pink-600);
+            font-size: 0.95rem;
+        }
+
+        .interval-status {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .status-badge.success {
+            background-color: var(--success);
+        }
+
+        .status-badge.danger {
+            background-color: var(--danger);
+        }
+
+        /* Tabs and Charts Section */
+        .charts-row-top {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1200px) {
+            .charts-row-top {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        /* Simulation History Panel */
+        .sim-stats-panel {
+            background: linear-gradient(135deg, var(--slate-900) 0%, #3a2227 100%);
+            color: white;
+            border-radius: var(--radius-md);
+            padding: 1.2rem 1.5rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .sim-stat-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .sim-stat-label {
+            font-size: 0.85rem;
+            color: var(--pink-300);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .sim-stat-value {
+            font-family: var(--font-point);
+            font-size: 1.8rem;
+            color: var(--pink-100);
+        }
+
+        .sim-stat-value span {
+            color: white;
+        }
+
+        .sim-stat-value.highlight {
+            color: var(--pink-300);
+            text-shadow: 0 0 10px rgba(255, 62, 108, 0.4);
+        }
+
+        /* Gacha Easter Egg Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(44, 29, 33, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fffcfc 0%, var(--pink-50) 100%);
+            border: 3px solid var(--pink-300);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 550px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            transform: scale(0.8);
+            opacity: 0;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            overflow: hidden;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.2rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--pink-600);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .modal-close:hover {
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        .gacha-machine-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .gacha-title {
+            font-family: var(--font-point);
+            font-size: 1.8rem;
+            color: var(--pink-600);
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Visual representation of a Gacha */
+        .gacha-illustration {
+            width: 140px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--pink-300) 0%, var(--pink-500) 100%);
+            border-radius: 70px 70px 20px 20px;
+            position: relative;
+            border: 4px solid var(--slate-900);
+            box-shadow: var(--shadow-md);
+            overflow: visible;
+        }
+
+        .gacha-glass {
+            width: 110px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            top: 15px;
+            left: 11px;
+            border: 3px solid var(--slate-900);
+            overflow: hidden;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            gap: 4px;
+            padding: 5px;
+        }
+
+        .gacha-ball {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1px solid var(--slate-900);
+            box-shadow: inset -2px -2px 3px rgba(0,0,0,0.2);
+        }
+
+        .ball-pink { background-color: #FF7088; }
+        .ball-yellow { background-color: #F9E5C9; }
+        .ball-blue { background-color: #8CE8E5; }
+        .ball-gold { background-color: #FFD700; animation: pulseGold 1.5s infinite; }
+
+        .gacha-crank {
+            width: 40px;
+            height: 40px;
+            background-color: var(--slate-200);
+            border: 3px solid var(--slate-900);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 45px;
+            left: calc(50% - 20px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .crank-handle {
+            width: 25px;
+            height: 8px;
+            background-color: var(--slate-800);
+            border-radius: 4px;
+        }
+
+        .gacha-chute {
+            width: 35px;
+            height: 25px;
+            background-color: var(--slate-900);
+            border-radius: 8px 8px 0 0;
+            position: absolute;
+            bottom: 5px;
+            left: calc(50% - 17.5px);
+        }
+
+        .capsule-drop {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--slate-900);
+            position: absolute;
+            bottom: -5px;
+            left: calc(50% - 12px);
+            background: linear-gradient(to bottom, #FFD700 50%, white 50%);
+            display: none;
+            animation: bounceIn 0.5s ease-out forwards;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Result display in Gacha */
+        .gacha-result {
+            display: none;
+            width: 100%;
+            background: white;
+            border: 2px dashed var(--pink-300);
+            border-radius: var(--radius-md);
+            padding: 1.2rem;
+            margin-top: 1rem;
+            animation: fadeIn 0.4s forwards;
+            text-align: center;
+        }
+
+        .rarity-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-family: var(--font-point);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .rarity-cosmic { background: linear-gradient(45deg, #a855f7, #ec4899, #f43f5e); animation: rainbow 3s infinite; }
+        .rarity-legendary { background: linear-gradient(135deg, #eab308, #dfb175); }
+        .rarity-epic { background: linear-gradient(135deg, #a855f7, #d946ef); }
+        .rarity-rare { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
+        .rarity-common { background: linear-gradient(135deg, #94a3b8, #cbd5e1); }
+
+        .fortune-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--slate-800);
+            margin: 0.8rem 0;
+            padding: 0.5rem;
+            background-color: var(--pink-50);
+            border-radius: 8px;
+            border-left: 4px solid var(--pink-400);
+        }
+
+        .fortune-detail {
+            font-size: 0.85rem;
+            color: var(--slate-700);
+            margin-top: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popUp {
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes rattle {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-4px, 2px) rotate(-3deg); }
+            40% { transform: translate(4px, -2px) rotate(3deg); }
+            60% { transform: translate(-3px, -1px) rotate(-1.5deg); }
+            80% { transform: translate(3px, 1px) rotate(1.5deg); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: translateY(-50px) scale(0.3); opacity: 0; }
+            70% { transform: translateY(10px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulseGold {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,215,0,0.6)); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 8px rgba(255,215,0,0.9)); }
+        }
+
+        .machine-rattling {
+            animation: rattle 0.6s ease-in-out;
+        }
+
+        /* Responsive Layout adjustment */
+        @media (max-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                flex-direction: column;
+            }
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--slate-700);
+            background-color: var(--pink-100);
+            border-top: 1px solid var(--pink-200);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .footer-heart {
+            color: var(--pink-500);
+            animation: heartBeat 1.2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.15); }
+            40% { transform: scale(1.05); }
+            60% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cherry Blossom Overlay Canvas -->
+    <canvas id="blossomCanvas"></canvas>
+
+    <!-- Header Section -->
+    <header>
+        <div class="header-left">
+            <span class="logo-emoji" id="logoEmoji" onclick="handleLogoClick()">🌸</span>
+            <div class="title-container">
+                <h1 onclick="handleTitleClick()">잠재고객 1인당 월 평균 예상 소비액 추정</h1>
+                <span class="subtitle">배달 구독 서비스 출시에 따른 고교 확률과 통계 시뮬레이터</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="tag">모평균의 신뢰구간 추정</span>
+            <button class="easter-egg-btn" onclick="triggerEasterEgg()" title="비밀의 벚꽃 비 내리기">🌸</button>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-container">
+        <!-- Sidebar Controls -->
+        <section class="sidebar">
+            <!-- Region Selector Card -->
+            <div class="card">
+                <h2 class="card-title">📍 표집 틀 설정 (지역 선택)</h2>
+                <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                    특정 지역만 제한하거나 전국 단위로 표집 틀(Sampling Frame)을 조정하여 지역별 혼합 오차 효과를 제어합니다.
+                </p>
+                <button class="select-all-btn" onclick="toggleSelectAllRegions()">모든 지역 선택 해제</button>
+                <div class="region-list" id="regionListContainer">
+                    <!-- Javascript will render the region list items here -->
+                </div>
+            </div>
+
+            <!-- Sampling Size Slider Card -->
+            <div class="card">
+                <h2 class="card-title">⚙️ 표본 추출 조건</h2>
+                
+                <div class="form-group">
+                    <div class="form-label">
+                        <span>표본 크기 (n)</span>
+                        <span class="input-badge" id="sampleSizeDisplay">100</span>
+                    </div>
+                    <input type="range" id="sampleSizeSlider" min="10" max="1000" step="5" value="100" oninput="updateSampleSize(this.value)">
+                </div>
+
+                <button class="btn-primary" onclick="drawNewSample()">
+                    <span>🎲</span> 표본 추출 (Sample)
+                </button>
+
+                <div class="toggle-group">
+                    <span class="toggle-label">🔄 자동 연속 추출</span>
+                    <label class="switch">
+                        <input type="checkbox" id="autoDrawToggle" onchange="toggleAutoDraw()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-group" style="margin-top: 0.8rem;">
+                    <div class="form-label">
+                        <span>자동 추출 주기 (초)</span>
+                        <span class="input-badge" id="autoSpeedDisplay">1.0s</span>
+                    </div>
+                    <input type="range" id="autoSpeedSlider" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updateAutoSpeed(this.value)">
+                </div>
+
+                <button class="btn-secondary" onclick="resetHistory()">
+                    <span>🧹</span> 시뮬레이션 이력 초기화
+                </button>
+            </div>
+        </section>
+
+        <!-- Main Panel Details -->
+        <section class="main-content">
+            <!-- Top Dashboard Stats -->
+            <div class="metrics-grid">
+                <!-- True Mean Card -->
+                <div class="metric-card accent">
+                    <div>
+                        <div class="metric-title">참값 모집단 평균 (μ)</div>
+                        <div class="metric-value" id="popMeanValue">0원</div>
+                        <div class="metric-desc">선택된 지역들의 가중 합산 참값</div>
+                    </div>
+                    <div class="metric-desc" id="popSdValue" style="margin-top: 0.5rem; color: var(--slate-700);">
+                        모표준편차 (σ): 0원
+                    </div>
+                </div>
+
+                <!-- Sample Mean Card -->
+                <div class="metric-card">
+                    <div>
+                        <div class="metric-title">표본 평균 (x̄)</div>
+                        <div class="metric-value" id="sampleMeanValue">-</div>
+                        <div class="metric-desc">현재 추출된 표본들의 산술 평균</div>
+                    </div>
+                    <div class="metric-desc" id="sampleSdValue" style="margin-top: 0.5rem; color: var(--slate-700);">
+                        표본표준편차 (s): -
+                    </div>
+                </div>
+
+                <!-- 95% Confidence Interval Card -->
+                <div class="metric-card">
+                    <div>
+                        <div class="metric-title">95% 신뢰구간 [x̄ ± 1.96 × SE]</div>
+                        <div class="interval-box">
+                            <span class="interval-range" id="ci95Range">-</span>
+                            <span class="interval-status" id="ci95Status">
+                                <span class="status-badge" style="background-color: var(--slate-200); color: var(--slate-800);">대기 중</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 99% Confidence Interval Card -->
+                <div class="metric-card">
+                    <div>
+                        <div class="metric-title">99% 신뢰구간 [x̄ ± 2.576 × SE]</div>
+                        <div class="interval-box">
+                            <span class="interval-range" id="ci99Range">-</span>
+                            <span class="interval-status" id="ci99Status">
+                                <span class="status-badge" style="background-color: var(--slate-200); color: var(--slate-800);">대기 중</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Running Stats -->
+            <div class="sim-stats-panel">
+                <div class="sim-stat-item">
+                    <div class="sim-stat-label">총 추출 횟수 (N)</div>
+                    <div class="sim-stat-value" id="runCountValue"><span>0</span> 회</div>
+                </div>
+                <div class="sim-stat-item">
+                    <div class="sim-stat-label">95% 신뢰구간 커버리지 (참값 포함 비율)</div>
+                    <div class="sim-stat-value highlight" id="ci95Coverage">-</div>
+                </div>
+                <div class="sim-stat-item">
+                    <div class="sim-stat-label">99% 신뢰구간 커버리지 (참값 포함 비율)</div>
+                    <div class="sim-stat-value highlight" id="ci99Coverage">-</div>
+                </div>
+            </div>
+
+            <!-- Charts Section Grid -->
+            <div class="charts-row-top">
+                <!-- Chart 1: Distributions -->
+                <div class="card">
+                    <h3 class="card-title">📊 표본 분포 vs 모집단 분포</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                        추출된 표본의 상대도수 히스토그램과 선택된 지역들의 참값 밀도 함수를 겹쳐 그립니다.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: CI History -->
+                <div class="card">
+                    <h3 class="card-title">📈 신뢰구간 추정 역사 (최근 30회)</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                        각 추출에서의 95% 신뢰구간 범위를 표시합니다. 세로선은 참 모평균(μ)을 나타내며, 참값을 포함하지 못한 구간은 <span style="color: var(--danger); font-weight: bold;">빨간색</span>으로 표시됩니다.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="ciHistoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 3: Regional analysis -->
+            <div class="card">
+                <h3 class="card-title">🗺️ 선택 지역별 참값 평균 vs 현재 표본 평균 비교</h3>
+                <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                    개별 지역의 실제 모평균들과 전체 선택 집단의 가중 모평균, 그리고 이번 회차에 추출된 표본 평균을 비교해봅니다.
+                </p>
+                <div class="chart-container" style="height: 240px;">
+                    <canvas id="regionalChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <span>배달 구독 서비스 소비자 선호도 조사 시뮬레이터</span>
+        <span>•</span>
+        <span>Made with <span class="footer-heart">🌸</span> for Statistics Education</span>
+    </footer>
+
+    <!-- Gacha Easter Egg Modal -->
+    <div class="modal-overlay" id="gachaModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGachaModal()">×</button>
+            <h2 class="gacha-title">🌸 비밀의 벚꽃 뽑기 머신 🌸</h2>
+            <p style="font-size: 0.85rem; color: var(--slate-700); text-align: center; margin-top: 0.4rem; padding: 0 1rem;">
+                통계적 행운을 테스트해보세요! 레버를 누르면 무작위 크기의 표본을 뽑아 참값과의 거리를 측정하고 오늘의 통계 행운을 점쳐줍니다.
+            </p>
+            
+            <div class="gacha-machine-container">
+                <div class="gacha-illustration" id="gachaMachine">
+                    <div class="gacha-glass">
+                        <div class="gacha-ball ball-pink"></div>
+                        <div class="gacha-ball ball-yellow"></div>
+                        <div class="gacha-ball ball-blue"></div>
+                        <div class="gacha-ball ball-pink"></div>
+                        <div class="gacha-ball ball-gold"></div>
+                        <div class="gacha-ball ball-blue"></div>
+                        <div class="gacha-ball ball-yellow"></div>
+                        <div class="gacha-ball ball-pink"></div>
+                    </div>
+                    <div class="gacha-crank" id="gachaCrank" onclick="pullGachaLever()">
+                        <div class="crank-handle"></div>
+                    </div>
+                    <div class="gacha-chute"></div>
+                    <div class="capsule-drop" id="gachaCapsule" onclick="openGachaCapsule()"></div>
+                </div>
+
+                <div class="gacha-result" id="gachaResult">
+                    <div class="rarity-badge" id="gachaRarity">COMMON</div>
+                    <h3 style="font-family: var(--font-point); margin-bottom: 0.5rem; color: var(--slate-900);">
+                        표본 크기 n = <span id="gachaN" style="color: var(--pink-600);">0</span>
+                    </h3>
+                    <div style="font-size: 0.9rem; color: var(--slate-700); margin-bottom: 0.5rem;">
+                        실제 참값: <span id="gachaPopMean" style="font-weight: bold;">-</span><br>
+                        Gacha 표본 평균: <span id="gachaSampleMean" style="font-weight: bold; color: var(--pink-600);">-</span><br>
+                        오차율: <span id="gachaError" style="font-weight: bold;">-</span>
+                    </div>
+                    <div class="fortune-text" id="gachaFortune">오늘의 통계적 조언</div>
+                    <div class="fortune-detail" id="gachaDetail">설명</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Block containing all logic -->
+    <script>
+        // Regional populations data
+        const regionalData = [
+            { id: 'metropolitan', name: '수도권', mu: 45000, sigma: 12000, weight: 0.501, checked: true },
+            { id: 'gyeongsang', name: '경상권', mu: 41000, sigma: 11000, weight: 0.247, checked: true },
+            { id: 'chungcheong', name: '충청권', mu: 38000, sigma: 9500, weight: 0.108, checked: true },
+            { id: 'jeolla', name: '전라권', mu: 37000, sigma: 9000, weight: 0.097, checked: true },
+            { id: 'gangwon', name: '강원권', mu: 34000, sigma: 8000, weight: 0.029, checked: true },
+            { id: 'jeju', name: '제주권', mu: 43000, sigma: 13000, weight: 0.018, checked: true }
+        ];
+
+        // Simulation parameters
+        let sampleSize = 100;
+        let autoDrawIntervalId = null;
+        let autoDrawSpeed = 1.0; // seconds
+
+        // Simulation History State
+        const historyData = {
+            totalRuns: 0,
+            success95Count: 0,
+            success99Count: 0,
+            runs: [] // stores objects like { id, sampleMean, sd, se, lower95, upper95, lower99, upper99, contains95, contains99, popMean }
+        };
+
+        // Current Active Sample
+        let currentSample = [];
+        let currentSampleMean = 0;
+        let currentSampleSD = 0;
+
+        // Chart objects
+        let distributionChart = null;
+        let ciHistoryChart = null;
+        let regionalChart = null;
+
+        // Title click counter for Easter egg
+        let titleClickCount = 0;
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            renderRegionSelector();
+            calculatePopulationMetrics();
+            initCharts();
+            
+            // Draw initial sample
+            drawNewSample();
+        });
+
+        // Box-Muller transform for normal distribution
+        function randn_bm(mean, std) {
+            let u = 0, v = 0;
+            while(u === 0) u = Math.random(); 
+            while(v === 0) v = Math.random();
+            let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+            return num * std + mean;
+        }
+
+        // Render Checkboxes
+        function renderRegionSelector() {
+            const container = document.getElementById('regionListContainer');
+            container.innerHTML = '';
+
+            regionalData.forEach((region, index) => {
+                const checkedAttr = region.checked ? 'checked' : '';
+                const percentage = (region.weight * 100).toFixed(1);
+                
+                const item = document.createElement('div');
+                item.className = 'region-item';
+                item.innerHTML = `
+                    <label class="region-checkbox-label">
+                        <input type="checkbox" id="chk-${region.id}" ${checkedAttr} onchange="handleRegionCheckboxChange('${region.id}', this.checked)">
+                        <span>${region.name}</span>
+                    </label>
+                    <div class="region-meta">
+                        <div>비중: ${percentage}%</div>
+                        <div style="color: var(--pink-600); font-weight: 500;">μ=${region.mu.toLocaleString()}원</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Region checkbox change handler
+        function handleRegionCheckboxChange(id, isChecked) {
+            const region = regionalData.find(r => r.id === id);
+            if (region) {
+                region.checked = isChecked;
+            }
+
+            // Ensure at least one region is selected
+            const activeCount = regionalData.filter(r => r.checked).length;
+            if (activeCount === 0) {
+                // Force check the current one and alert
+                document.getElementById(`chk-${id}`).checked = true;
+                region.checked = true;
+                alert('최소 한 개의 지역을 선택해야 합니다.');
+                return;
+            }
+
+            calculatePopulationMetrics();
+            updateSelectAllBtnText();
+            
+            // Redraw sample when settings change
+            drawNewSample();
+        }
+
+        // Toggle select all regions
+        function toggleSelectAllRegions() {
+            const activeCount = regionalData.filter(r => r.checked).length;
+            const btn = document.querySelector('.select-all-btn');
+
+            if (activeCount > 0) {
+                // Uncheck all except Metropolitan (to prevent zero selection error)
+                regionalData.forEach(r => {
+                    r.checked = r.id === 'metropolitan';
+                });
+            } else {
+                // Check all
+                regionalData.forEach(r => {
+                    r.checked = true;
+                });
+            }
+
+            renderRegionSelector();
+            calculatePopulationMetrics();
+            updateSelectAllBtnText();
+            drawNewSample();
+        }
+
+        function updateSelectAllBtnText() {
+            const activeCount = regionalData.filter(r => r.checked).length;
+            const btn = document.querySelector('.select-all-btn');
+            if (activeCount === regionalData.length) {
+                btn.textContent = '모든 지역 선택 해제';
+            } else {
+                btn.textContent = '모든 지역 선택';
+            }
+        }
+
+        // Calculate dynamic population properties based on selected regions
+        let truePopMean = 0;
+        let truePopSD = 0;
+
+        function calculatePopulationMetrics() {
+            const selected = regionalData.filter(r => r.checked);
+            const sumWeights = selected.reduce((sum, r) => sum + r.weight, 0);
+
+            // Re-normalize weights among selected regions
+            let sumWeightedMean = 0;
+            let sumWeightedVarPlusMeanSq = 0;
+
+            selected.forEach(r => {
+                const normWeight = r.weight / sumWeights;
+                sumWeightedMean += normWeight * r.mu;
+                const variance = r.sigma * r.sigma;
+                sumWeightedVarPlusMeanSq += normWeight * (variance + r.mu * r.mu);
+            });
+
+            truePopMean = sumWeightedMean;
+            const truePopVar = sumWeightedVarPlusMeanSq - (truePopMean * truePopMean);
+            truePopSD = Math.sqrt(truePopVar);
+
+            // Update UI elements
+            document.getElementById('popMeanValue').innerText = `${Math.round(truePopMean).toLocaleString()}원`;
+            document.getElementById('popSdValue').innerText = `모표준편차 (σ): ${Math.round(truePopSD).toLocaleString()}원`;
+        }
+
+        // Update sample size slider values
+        function updateSampleSize(val) {
+            sampleSize = parseInt(val);
+            document.getElementById('sampleSizeDisplay').innerText = sampleSize;
+            
+            // Draw a fresh sample
+            drawNewSample();
+        }
+
+        // Draw new random sample using Box-Muller based on selected regional distributions
+        function drawNewSample() {
+            const selected = regionalData.filter(r => r.checked);
+            const sumWeights = selected.reduce((sum, r) => sum + r.weight, 0);
+
+            // Prepare cumulative weights for sampling
+            const cumWeights = [];
+            let cumulative = 0;
+            selected.forEach(r => {
+                cumulative += (r.weight / sumWeights);
+                cumWeights.push({ region: r, limit: cumulative });
+            });
+
+            currentSample = [];
+            for (let i = 0; i < sampleSize; i++) {
+                // 1. Choose region based on weights
+                const rand = Math.random();
+                let chosenRegion = selected[0];
+                for (let j = 0; j < cumWeights.length; j++) {
+                    if (rand <= cumWeights[j].limit) {
+                        chosenRegion = cumWeights[j].region;
+                        break;
+                    }
+                }
+                // 2. Draw normal sample
+                const spending = randn_bm(chosenRegion.mu, chosenRegion.sigma);
+                // Clamp spending to avoid negative numbers
+                currentSample.push(Math.max(0, Math.round(spending)));
+            }
+
+            // Calculate sample mean
+            const sum = currentSample.reduce((s, x) => s + x, 0);
+            currentSampleMean = sum / sampleSize;
+
+            // Calculate sample standard deviation (denominator n - 1)
+            let sumSqDiff = 0;
+            for (let i = 0; i < sampleSize; i++) {
+                const diff = currentSample[i] - currentSampleMean;
+                sumSqDiff += diff * diff;
+            }
+            currentSampleSD = Math.sqrt(sumSqDiff / (sampleSize - 1));
+
+            // Standard Error (SE)
+            const standardError = currentSampleSD / Math.sqrt(sampleSize);
+
+            // 95% Confidence Interval
+            const margin95 = 1.96 * standardError;
+            const ci95Lower = Math.max(0, currentSampleMean - margin95);
+            const ci95Upper = currentSampleMean + margin95;
+            const contains95 = (truePopMean >= ci95Lower && truePopMean <= ci95Upper);
+
+            // 99% Confidence Interval
+            const margin99 = 2.576 * standardError;
+            const ci99Lower = Math.max(0, currentSampleMean - margin99);
+            const ci99Upper = currentSampleMean + margin99;
+            const contains99 = (truePopMean >= ci99Lower && truePopMean <= ci99Upper);
+
+            // Update UI elements
+            document.getElementById('sampleMeanValue').innerText = `${Math.round(currentSampleMean).toLocaleString()}원`;
+            document.getElementById('sampleSdValue').innerText = `표본표준편차 (s): ${Math.round(currentSampleSD).toLocaleString()}원`;
+
+            document.getElementById('ci95Range').innerText = `[ ${Math.round(ci95Lower).toLocaleString()}원 , ${Math.round(ci95Upper).toLocaleString()}원 ]`;
+            const status95 = document.getElementById('ci95Status');
+            if (contains95) {
+                status95.innerHTML = `<span class="status-badge success">성공 (참값 포함)</span> <span style="font-size:0.75rem; color:var(--success)">정확오차: ${Math.round(Math.abs(truePopMean - currentSampleMean)).toLocaleString()}원</span>`;
+            } else {
+                status95.innerHTML = `<span class="status-badge danger">실패 (참값 미포함)</span> <span style="font-size:0.75rem; color:var(--danger)">벗어남: ${Math.round(Math.abs(truePopMean - currentSampleMean)).toLocaleString()}원</span>`;
+            }
+
+            document.getElementById('ci99Range').innerText = `[ ${Math.round(ci99Lower).toLocaleString()}원 , ${Math.round(ci99Upper).toLocaleString()}원 ]`;
+            const status99 = document.getElementById('ci99Status');
+            if (contains99) {
+                status99.innerHTML = `<span class="status-badge success">성공 (참값 포함)</span>`;
+            } else {
+                status99.innerHTML = `<span class="status-badge danger">실패 (참값 미포함)</span>`;
+            }
+
+            // Save to history
+            historyData.totalRuns += 1;
+            if (contains95) historyData.success95Count += 1;
+            if (contains99) historyData.success99Count += 1;
+
+            historyData.runs.push({
+                id: historyData.totalRuns,
+                sampleMean: currentSampleMean,
+                lower95: ci95Lower,
+                upper95: ci95Upper,
+                contains95: contains95,
+                lower99: ci99Lower,
+                upper99: ci99Upper,
+                contains99: contains99,
+                popMean: truePopMean
+            });
+
+            // Keep only latest 100 for history data lists, but overall count is correct
+            if (historyData.runs.length > 100) {
+                historyData.runs.shift();
+            }
+
+            // Update history indicators
+            document.getElementById('runCountValue').innerHTML = `<span>${historyData.totalRuns}</span> 회`;
+            
+            const rate95 = (historyData.success95Count / historyData.totalRuns * 100).toFixed(1);
+            const rate99 = (historyData.success99Count / historyData.totalRuns * 100).toFixed(1);
+            
+            document.getElementById('ci95Coverage').innerHTML = `<span>${rate95}</span>%`;
+            document.getElementById('ci99Coverage').innerHTML = `<span>${rate99}</span>%`;
+
+            // Update Charts
+            updateCharts();
+        }
+
+        // Auto Draw Controls
+        function toggleAutoDraw() {
+            const isChecked = document.getElementById('autoDrawToggle').checked;
+            if (isChecked) {
+                startAutoDraw();
+            } else {
+                stopAutoDraw();
+            }
+        }
+
+        function startAutoDraw() {
+            stopAutoDraw();
+            autoDrawIntervalId = setInterval(() => {
+                drawNewSample();
+            }, autoDrawSpeed * 1000);
+        }
+
+        function stopAutoDraw() {
+            if (autoDrawIntervalId) {
+                clearInterval(autoDrawIntervalId);
+                autoDrawIntervalId = null;
+            }
+        }
+
+        function updateAutoSpeed(val) {
+            autoDrawSpeed = parseFloat(val);
+            document.getElementById('autoSpeedDisplay').innerText = `${autoDrawSpeed.toFixed(1)}s`;
+            
+            // Restart interval with new speed if auto drawing is active
+            if (document.getElementById('autoDrawToggle').checked) {
+                startAutoDraw();
+            }
+        }
+
+        // Reset history simulation metrics
+        function resetHistory() {
+            historyData.totalRuns = 0;
+            historyData.success95Count = 0;
+            historyData.success99Count = 0;
+            historyData.runs = [];
+
+            document.getElementById('runCountValue').innerHTML = `<span>0</span> 회`;
+            document.getElementById('ci95Coverage').innerText = `-`;
+            document.getElementById('ci99Coverage').innerText = `-`;
+
+            drawNewSample();
+        }
+
+        // Chart Initialization
+        function initCharts() {
+            // Chart 1: Distribution (Histogram of sample + True Pop PDF)
+            const ctx1 = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '표본 상대도수',
+                            data: [],
+                            backgroundColor: 'rgba(255, 112, 136, 0.5)',
+                            borderColor: '#FF7088',
+                            borderWidth: 1,
+                            barPercentage: 1.0,
+                            categoryPercentage: 1.0,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '이론적 모집단 밀도 (Mixture PDF)',
+                            data: [],
+                            type: 'line',
+                            borderColor: 'rgba(227, 27, 80, 0.85)',
+                            borderWidth: 2.5,
+                            fill: true,
+                            backgroundColor: 'rgba(255, 202, 211, 0.25)',
+                            tension: 0.4,
+                            pointRadius: 0,
+                            yAxisID: 'yDensity'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '월 예상 소비액 (원)',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        },
+                        y: {
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '표본 데이터 수',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                precision: 0,
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        },
+                        yDensity: {
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '이론적 확률 밀도 (PDF)',
+                                color: '#B80D3C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                display: false
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: 'Presentation', size: 11, weight: 'bold' },
+                                color: '#423035'
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: { family: 'Presentation' },
+                            titleFont: { family: 'Presentation', weight: 'bold' }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: CI History Chart
+            const ctx2 = document.getElementById('ciHistoryChart').getContext('2d');
+            ciHistoryChart = new Chart(ctx2, {
+                type: 'bar', // Floating bars
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '95% 신뢰구간 범위 [Lower, Upper]',
+                            data: [],
+                            backgroundColor: [], // calculated dynamically
+                            borderWidth: 0,
+                            borderRadius: 4,
+                            barThickness: 6
+                        },
+                        {
+                            label: '표본평균 (x̄)',
+                            data: [],
+                            type: 'scatter',
+                            backgroundColor: '#FF3E6C',
+                            borderColor: '#FFFFFF',
+                            borderWidth: 1.5,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: '참 모평균 (μ)',
+                            data: [],
+                            type: 'line',
+                            borderColor: '#B38646',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '월 소비 추정액 (원)',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '최근 추출 회차',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: 'Presentation', size: 11, weight: 'bold' },
+                                color: '#423035'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        const val = context.raw;
+                                        return `신뢰구간: ${Math.round(val[0]).toLocaleString()}원 ~ ${Math.round(val[1]).toLocaleString()}원`;
+                                    }
+                                    if (context.datasetIndex === 1) {
+                                        return `표본평균: ${Math.round(context.raw.x).toLocaleString()}원`;
+                                    }
+                                    return `${context.dataset.label}: ${Math.round(context.raw.x).toLocaleString()}원`;
+                                }
+                            },
+                            bodyFont: { family: 'Presentation' }
+                        }
+                    }
+                }
+            });
+
+            // Chart 3: Regional comparison chart
+            const ctx3 = document.getElementById('regionalChart').getContext('2d');
+            regionalChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '지역별 실제 참값 모평균 (μ_r)',
+                            data: [],
+                            backgroundColor: [], // gray/pink based on selection
+                            borderColor: [],
+                            borderWidth: 1.5,
+                            borderRadius: 4
+                        },
+                        {
+                            label: '선택 집단 가중 모평균 (μ)',
+                            data: [],
+                            type: 'line',
+                            borderColor: '#B38646',
+                            borderWidth: 2,
+                            borderDash: [2, 2],
+                            fill: false,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '현재 표본 평균 (x̄)',
+                            data: [],
+                            type: 'line',
+                            borderColor: '#FF3E6C',
+                            borderWidth: 3,
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            grid: { display: false }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '소비액 (원)',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: 'Presentation', size: 10, weight: 'bold' },
+                                color: '#423035'
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: { family: 'Presentation' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update visual representations of all charts
+        function updateCharts() {
+            if (!distributionChart || !ciHistoryChart || !regionalChart) return;
+
+            // 1. Update Distribution Chart (Chart 1)
+            // Create range bins from 0 to 100,000 in chunks of 5,000
+            const binSize = 5000;
+            const maxVal = 100000;
+            const labels = [];
+            const barData = Array(maxVal / binSize).fill(0);
+
+            for (let i = 0; i < maxVal; i += binSize) {
+                labels.push(`${i / 1000}k~${(i + binSize) / 1000}k`);
+            }
+
+            // Populate sample counts
+            currentSample.forEach(x => {
+                const binIdx = Math.floor(x / binSize);
+                if (binIdx >= 0 && binIdx < barData.length) {
+                    barData[binIdx]++;
+                }
+            });
+
+            // Calculate Theoretical Mixture density curve
+            const activeRegions = regionalData.filter(r => r.checked);
+            const sumWeights = activeRegions.reduce((sum, r) => sum + r.weight, 0);
+            const lineData = [];
+
+            // Evaluated at bin midpoints for smoother rendering
+            for (let i = 0; i < maxVal; i += binSize) {
+                const midpoint = i + (binSize / 2);
+                let density = 0;
+                
+                activeRegions.forEach(r => {
+                    const normWeight = r.weight / sumWeights;
+                    const val = (1 / (r.sigma * Math.sqrt(2 * Math.PI))) * 
+                                Math.exp(-0.5 * Math.pow((midpoint - r.mu) / r.sigma, 2));
+                    density += normWeight * val;
+                });
+                
+                lineData.push(density);
+            }
+
+            distributionChart.data.labels = labels;
+            distributionChart.data.datasets[0].data = barData;
+            distributionChart.data.datasets[1].data = lineData;
+            distributionChart.update('none');
+
+            // 2. Update Confidence Interval History Chart (Chart 2)
+            // Show recent runs (up to 30)
+            const recentRuns = historyData.runs.slice(-30);
+            const ciLabels = recentRuns.map(run => `${run.id}회차`);
+            
+            // Floating bars: [[lower, upper], ...]
+            const ciBars = recentRuns.map(run => [run.lower95, run.upper95]);
+            const sampleMeans = recentRuns.map((run, index) => ({ x: run.sampleMean, y: index }));
+            const popMeans = recentRuns.map((run, index) => ({ x: run.popMean, y: index }));
+            
+            // Set bar colors: light green if contains true mean, bright rose-pink if not
+            const barColors = recentRuns.map(run => 
+                run.contains95 ? 'rgba(46, 196, 182, 0.65)' : 'rgba(231, 29, 54, 0.75)'
+            );
+
+            ciHistoryChart.data.labels = ciLabels;
+            ciHistoryChart.data.datasets[0].data = ciBars;
+            ciHistoryChart.data.datasets[0].backgroundColor = barColors;
+            ciHistoryChart.data.datasets[1].data = sampleMeans;
+            ciHistoryChart.data.datasets[2].data = popMeans;
+            ciHistoryChart.update('none');
+
+            // 3. Update Regional Comparison Chart (Chart 3)
+            const regLabels = regionalData.map(r => r.name);
+            const regMeans = regionalData.map(r => r.mu);
+            const regColors = regionalData.map(r => 
+                r.checked ? 'rgba(255, 112, 136, 0.85)' : 'rgba(186, 172, 175, 0.4)'
+            );
+            const regBorders = regionalData.map(r => 
+                r.checked ? '#FF4D6D' : 'rgba(186, 172, 175, 0.6)'
+            );
+
+            // Straight horizontal line dataset for truePopMean & sampleMean
+            const popMeanLine = Array(regionalData.length).fill(truePopMean);
+            const sampleMeanLine = Array(regionalData.length).fill(currentSampleMean);
+
+            regionalChart.data.labels = regLabels;
+            regionalChart.data.datasets[0].data = regMeans;
+            regionalChart.data.datasets[0].backgroundColor = regColors;
+            regionalChart.data.datasets[0].borderColor = regBorders;
+            regionalChart.data.datasets[1].data = popMeanLine;
+            regionalChart.data.datasets[2].data = sampleMeanLine;
+            
+            regionalChart.update('none');
+        }
+
+        // --- Easter Egg Logic: Cherry Blossom Snow Rain and Gacha Machine ---
+        let blossomCanvas = null;
+        let blossomCtx = null;
+        let blossomPetals = [];
+        let blossomAnimationId = null;
+
+        class Petal {
+            constructor() {
+                this.x = Math.random() * blossomCanvas.width;
+                this.y = Math.random() * -100 - 10;
+                this.size = Math.random() * 8 + 6;
+                this.speedY = Math.random() * 1.5 + 1.0;
+                this.speedX = Math.random() * 1.0 - 0.5;
+                this.angle = Math.random() * 360;
+                this.spinSpeed = Math.random() * 2 - 1;
+                this.opacity = Math.random() * 0.4 + 0.5;
+                this.waveRange = Math.random() * 20 + 10;
+                this.waveSpeed = Math.random() * 0.02 + 0.01;
+                this.waveOffset = Math.random() * 100;
+            }
+
+            update() {
+                this.y += this.speedY;
+                // Swing left/right like falling cherry petals
+                this.x += this.speedX + Math.sin(this.y * this.waveSpeed + this.waveOffset) * 0.3;
+                this.angle += this.spinSpeed;
+
+                // Reset position if petal drifts off bottom/sides
+                if (this.y > blossomCanvas.height + 20) {
+                    this.y = -20;
+                    this.x = Math.random() * blossomCanvas.width;
+                }
+            }
+
+            draw() {
+                blossomCtx.save();
+                blossomCtx.translate(this.x, this.y);
+                blossomCtx.rotate(this.angle * Math.PI / 180);
+                blossomCtx.globalAlpha = this.opacity;
+                
+                // Draw petal using path
+                blossomCtx.beginPath();
+                blossomCtx.fillStyle = '#FFB7C5';
+                // Cute asymmetrical petal curve
+                blossomCtx.moveTo(0, 0);
+                blossomCtx.quadraticCurveTo(-this.size, -this.size/2, -this.size/2, -this.size);
+                blossomCtx.quadraticCurveTo(0, -this.size * 1.2, this.size/2, -this.size);
+                blossomCtx.quadraticCurveTo(this.size, -this.size/2, 0, 0);
+                blossomCtx.fill();
+                blossomCtx.restore();
+            }
+        }
+
+        function triggerEasterEgg() {
+            blossomCanvas = document.getElementById('blossomCanvas');
+            blossomCtx = blossomCanvas.getContext('2d');
+            blossomCanvas.style.display = 'block';
+
+            // Resize canvas
+            window.addEventListener('resize', resizeBlossomCanvas);
+            resizeBlossomCanvas();
+
+            // Populate petals if empty
+            if (blossomPetals.length === 0) {
+                for (let i = 0; i < 40; i++) {
+                    blossomPetals.push(new Petal());
+                }
+            }
+
+            // Start loop
+            if (!blossomAnimationId) {
+                blossomAnimationLoop();
+            }
+
+            // Open Gacha Modal too!
+            openGachaModal();
+        }
+
+        function resizeBlossomCanvas() {
+            if (blossomCanvas) {
+                blossomCanvas.width = window.innerWidth;
+                blossomCanvas.height = window.innerHeight;
+            }
+        }
+
+        function blossomAnimationLoop() {
+            blossomCtx.clearRect(0, 0, blossomCanvas.width, blossomCanvas.height);
+            blossomPetals.forEach(petal => {
+                petal.update();
+                petal.draw();
+            });
+            blossomAnimationId = requestAnimationFrame(blossomAnimationLoop);
+        }
+
+        function stopEasterEggAnimation() {
+            if (blossomAnimationId) {
+                cancelAnimationFrame(blossomAnimationId);
+                blossomAnimationId = null;
+            }
+            if (blossomCanvas) {
+                blossomCanvas.style.display = 'none';
+            }
+        }
+
+        // Handles logo double clicks or 7 times clicks
+        function handleLogoClick() {
+            titleClickCount++;
+            if (titleClickCount >= 7) {
+                triggerEasterEgg();
+                titleClickCount = 0;
+            }
+        }
+
+        function handleTitleClick() {
+            titleClickCount++;
+            if (titleClickCount >= 7) {
+                triggerEasterEgg();
+                titleClickCount = 0;
+            }
+        }
+
+        // --- Gacha Machine Game Mechanics ---
+        let gachaSpinning = false;
+
+        function openGachaModal() {
+            document.getElementById('gachaModal').style.display = 'flex';
+            document.getElementById('gachaResult').style.display = 'none';
+            document.getElementById('gachaCapsule').style.display = 'none';
+        }
+
+        function closeGachaModal() {
+            document.getElementById('gachaModal').style.display = 'none';
+            stopEasterEggAnimation();
+        }
+
+        function pullGachaLever() {
+            if (gachaSpinning) return;
+            gachaSpinning = true;
+
+            // Rattle gacha machine & spin handle
+            const machine = document.getElementById('gachaMachine');
+            const crank = document.getElementById('gachaCrank');
+            const capsule = document.getElementById('gachaCapsule');
+            
+            machine.classList.add('machine-rattling');
+            crank.style.transform = 'rotate(360deg)';
+            capsule.style.display = 'none';
+            document.getElementById('gachaResult').style.display = 'none';
+
+            setTimeout(() => {
+                // Remove rattle animation class
+                machine.classList.remove('machine-rattling');
+                crank.style.transform = 'rotate(0deg)';
+                
+                // Roll out capsule
+                capsule.style.display = 'block';
+                gachaSpinning = false;
+            }, 800);
+        }
+
+        function openGachaCapsule() {
+            // Unveil capsule contents and statistics fortune
+            const capsule = document.getElementById('gachaCapsule');
+            capsule.style.display = 'none';
+
+            // Generate a random gacha sample size
+            const luckyN = Math.floor(Math.random() * 200) + 15; // 15 to 215
+            
+            // Draw a temporary gacha sample
+            const selected = regionalData.filter(r => r.checked);
+            const sumWeights = selected.reduce((sum, r) => sum + r.weight, 0);
+
+            const tempSample = [];
+            for (let i = 0; i < luckyN; i++) {
+                const rand = Math.random();
+                let chosenRegion = selected[0];
+                for (let j = 0; j < selected.length; j++) {
+                    const normWeight = selected[j].weight / sumWeights;
+                    if (rand <= (selected.slice(0, j + 1).reduce((s, r) => s + r.weight, 0) / sumWeights)) {
+                        chosenRegion = selected[j];
+                        break;
+                    }
+                }
+                const spending = randn_bm(chosenRegion.mu, chosenRegion.sigma);
+                tempSample.push(Math.max(0, Math.round(spending)));
+            }
+
+            const tempMean = tempSample.reduce((s, x) => s + x, 0) / luckyN;
+            const diffError = Math.abs(truePopMean - tempMean);
+            const percentError = (diffError / truePopMean) * 100;
+
+            // Rarity definition based on closeness to true population mean
+            let rarityClass = 'rarity-common';
+            let rarityName = 'COMMON (평범한 표본)';
+            let fortuneText = '';
+            let detailText = '';
+
+            if (percentError < 0.15) {
+                rarityClass = 'rarity-cosmic';
+                rarityName = 'COSMIC LEGENDARY (우주급 신의 표본)';
+                fortuneText = '오늘의 통계적 축복: 오차가 단 0.15% 미만인 기적적인 표본입니다! 당신의 판단력은 99.9% 신뢰구간도 뛰어넘는 절대적인 믿음을 줍니다. 로또를 사거나 중요한 선택을 해보세요!';
+                detailText = '참값과의 차이가 극히 희소하게 접근한 표본입니다. 무작위성이 보여줄 수 있는 극치입니다.';
+            } else if (percentError < 0.5) {
+                rarityClass = 'rarity-legendary';
+                rarityName = 'LEGENDARY (전설적인 표본)';
+                fortuneText = '오늘의 통계적 조언: 모평균에 매우 완벽하게 근접했습니다! 참값 근처로 수렴한 이 표본처럼 당신의 일상도 오차 없이 순조로울 것입니다. 긍정적인 에너지가 가득합니다!';
+                detailText = '중심극한정리에 의해 표본 평균이 참값으로 모여들고 있음을 실시간으로 보여주는 행운입니다.';
+            } else if (percentError < 1.2) {
+                rarityClass = 'rarity-epic';
+                rarityName = 'EPIC (영웅적인 표본)';
+                fortuneText = '오늘의 행운: 신뢰도 95% 구간보다 훨씬 좁은 범위에서 참값을 가리키고 있습니다. 효율과 성과가 급격히 상승할 행운의 날입니다!';
+                detailText = '표본의 편향(Bias)이 낮아 통계적으로 우수한 정확성을 띱니다.';
+            } else if (percentError < 2.5) {
+                rarityClass = 'rarity-rare';
+                rarityName = 'RARE (희귀한 표본)';
+                fortuneText = '통계 점괘: 평이한 것보다 살짝 비껴나갔지만 충분히 신뢰할 만한 구간에 놓여 있습니다. 독창적인 창의력을 발휘할 찬스입니다!';
+                detailText = '충분한 대표성을 지녀, 비록 오차는 조금 존재하지만 통계적 추정치로는 합격선입니다.';
+            } else {
+                rarityClass = 'rarity-common';
+                rarityName = 'COMMON (평범한 표본)';
+                fortuneText = '통계적 교훈: 오차가 2.5% 이상 벌어졌습니다. 하지만 실망 마세요! 표본의 오차 한계(Margin of Error) 안에 참값은 들어가 있을 것입니다. 더 많은 표본(n)을 쌓아보세요!';
+                detailText = '작은 표본 크기에서는 이 정도 오차가 흔하게 발생합니다. 통계적 변동성을 직접 확인하신 셈입니다.';
+            }
+
+            // Fill results
+            const rarityBadge = document.getElementById('gachaRarity');
+            rarityBadge.className = `rarity-badge ${rarityClass}`;
+            rarityBadge.innerText = rarityName;
+
+            document.getElementById('gachaN').innerText = luckyN;
+            document.getElementById('gachaPopMean').innerText = `${Math.round(truePopMean).toLocaleString()}원`;
+            document.getElementById('gachaSampleMean').innerText = `${Math.round(tempMean).toLocaleString()}원`;
+            document.getElementById('gachaError').innerText = `${Math.round(diffError).toLocaleString()}원 (오차율 ${percentError.toFixed(3)}%)`;
+            
+            document.getElementById('gachaFortune').innerText = fortuneText;
+            document.getElementById('gachaDetail').innerText = `[상세분석] ${detailText}`;
+
+            document.getElementById('gachaResult').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
