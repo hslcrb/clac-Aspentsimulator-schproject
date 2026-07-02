@@ -126,9 +126,9 @@
         }
 
         header {
-            background: linear-gradient(135deg, rgba(255, 228, 232, 0.9) 0%, rgba(255, 202, 211, 0.9) 100%);
+            background: rgba(255, 245, 246, 0.96);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--pink-200);
+            border-bottom: 1px solid var(--pink-100);
             padding: 1.5rem 2rem;
             position: sticky;
             top: 0;
@@ -358,7 +358,7 @@
         /* Buttons styling */
         .btn-primary {
             width: 100%;
-            background: linear-gradient(135deg, var(--pink-400) 0%, var(--pink-600) 100%);
+            background: var(--pink-500);
             color: white;
             border: none;
             padding: 0.9rem;
@@ -377,11 +377,11 @@
 
         .btn-primary:hover {
             box-shadow: var(--shadow-glow);
-            background: linear-gradient(135deg, var(--pink-600) 0%, var(--pink-800) 100%);
+            background: var(--pink-600);
         }
 
         .btn-primary:active {
-            background: linear-gradient(135deg, var(--pink-700) 0%, var(--pink-900) 100%);
+            background: var(--pink-700);
         }
 
         .btn-secondary {
@@ -1046,7 +1046,10 @@
                 <span class="subtitle">배달 구독 서비스 출시에 따른 고교 확률과 통계 시뮬레이터</span>
             </div>
         </div>
-        <div class="header-right">
+        <div class="header-right" style="display: flex; align-items: center; gap: 0.8rem;">
+            <button id="musicToggleBtn" onclick="toggleMusic()" style="font-size: 0.95rem; padding: 0.4rem 0.8rem; margin: 0; width: auto; background: var(--pink-500); border: none; color: white; border-radius: var(--radius-sm); font-weight: bold; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; gap: 0.3rem;">
+                <span class="no-select-emoji">🎵</span> 음악 켜기
+            </button>
             <span class="tag">모평균의 신뢰구간 추정</span>
             <button class="easter-egg-btn no-select-emoji" onclick="triggerEasterEgg()" title="비밀의 벚꽃 비 내리기">🌸</button>
         </div>
@@ -1177,8 +1180,16 @@
                 </div>
             </div>
 
-            <!-- Charts Section Grid -->
-            <div class="charts-row-top">
+            <!-- 실시간 분석 리포트 & 통계적 인사이트 카드 -->
+            <div class="card" style="background-color: #FFFFFF; border: none; margin-bottom: 1.5rem;">
+                <h3 class="card-title"><span class="no-select-emoji">📋</span> 실시간 분석 리포트 &amp; 통계적 인사이트</h3>
+                <div id="dynamicReportContent" style="font-size: 0.95rem; line-height: 1.7; color: var(--slate-800);">
+                    <!-- Javascript가 실시간으로 데이터를 가리키는 리포트를 인젝션합니다. -->
+                </div>
+            </div>
+
+            <!-- Charts Section Grid (2x2 Grid Layout) -->
+            <div class="charts-grid-layout" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: 1.5rem;">
                 <!-- Chart 1: Distributions -->
                 <div class="card">
                     <h3 class="card-title"><span class="no-select-emoji">📊</span> 표본 분포 vs 모집단 분포</h3>
@@ -1200,16 +1211,27 @@
                         <canvas id="ciHistoryChart"></canvas>
                     </div>
                 </div>
-            </div>
 
-            <!-- Chart 3: Regional analysis -->
-            <div class="card">
-                <h3 class="card-title"><span class="no-select-emoji">🗺️</span> 선택 지역별 참값 평균 vs 현재 표본 평균 비교</h3>
-                <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
-                    개별 지역의 실제 모평균들과 전체 선택 집단의 가중 모평균, 그리고 이번 회차에 추출된 표본 평균을 비교해봅니다.
-                </p>
-                <div class="chart-container" style="height: 240px;">
-                    <canvas id="regionalChart"></canvas>
+                <!-- Chart 3: Regional analysis -->
+                <div class="card">
+                    <h3 class="card-title"><span class="no-select-emoji">🗺️</span> 선택 지역별 참값 평균 vs 현재 표본 평균 비교</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                        개별 지역의 실제 모평균들과 전체 선택 집단의 가중 모평균, 그리고 이번 회차에 추출된 표본 평균을 비교해봅니다.
+                    </p>
+                    <div class="chart-container" style="height: 240px;">
+                        <canvas id="regionalChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 4: Convergence (LLN) -->
+                <div class="card">
+                    <h3 class="card-title"><span class="no-select-emoji">📉</span> 대수의 법칙: 모평균 수렴 추이</h3>
+                    <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
+                        시행 횟수가 늘어남에 따라 누적 표본평균선(분홍색 실선)이 모집단의 모평균 참값(황금색 점선)으로 조화롭게 수렴해 나가는 궤적을 확인합니다.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="convergenceChart"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1301,6 +1323,7 @@
         let distributionChart = null;
         let ciHistoryChart = null;
         let regionalChart = null;
+        let convergenceChart = null;
 
         // Title click counter for Easter egg
         let titleClickCount = 0;
@@ -1525,6 +1548,11 @@
             if (contains95) historyData.success95Count += 1;
             if (contains99) historyData.success99Count += 1;
 
+            // 대수의 법칙(Law of Large Numbers)에 따라, 이전까지의 모든 표본평균 합에 현재의 표본평균을 가산하고 
+            // 현재의 누적 시행 횟수로 나누어 누적 표본평균의 흐름(cumulative mean)을 정교하게 추적한다.
+            const prevSum = historyData.runs.reduce((sum, run) => sum + run.sampleMean, 0);
+            const runningCumulativeMean = (prevSum + currentSampleMean) / (historyData.runs.length + 1);
+
             historyData.runs.push({
                 id: historyData.totalRuns,
                 sampleMean: currentSampleMean,
@@ -1534,10 +1562,11 @@
                 lower99: ci99Lower,
                 upper99: ci99Upper,
                 contains99: contains99,
-                popMean: truePopMean
+                popMean: truePopMean,
+                cumulativeMean: runningCumulativeMean
             });
 
-            // Keep only latest 100 for history data lists, but overall count is correct
+            // 차트 렌더링 성능을 보존하기 위해 최근 100개의 역사 데이터만 스냅샷 형태로 배열에 유지하되, 전체 총계(totalRuns)는 훼손하지 않는다.
             if (historyData.runs.length > 100) {
                 historyData.runs.shift();
             }
@@ -1550,6 +1579,9 @@
             
             document.getElementById('ci95Coverage').innerHTML = `<span>${rate95}</span>%`;
             document.getElementById('ci99Coverage').innerHTML = `<span>${rate99}</span>%`;
+
+            // 동적 템플릿 리포트를 갱신하여 인사이트 도출 시스템을 작동시킨다.
+            updateReport();
 
             // Update Charts
             updateCharts();
@@ -1601,6 +1633,225 @@
             document.getElementById('ci99Coverage').innerText = `-`;
 
             drawNewSample();
+        }
+
+        // ============================================================================
+        // 📋 1. 실시간 분석 리포트 & 변수 템플릿 인사이트 도출 시스템
+        // ============================================================================
+        function updateReport() {
+            const container = document.getElementById('dynamicReportContent');
+            if (!container) return;
+
+            const selected = regionalData.filter(r => r.checked);
+            const regionNames = selected.map(r => r.name).join(', ');
+            
+            const standardError = currentSampleSD / Math.sqrt(sampleSize);
+            const margin95 = 1.96 * standardError;
+            const ci95Lower = Math.max(0, currentSampleMean - margin95);
+            const ci95Upper = currentSampleMean + margin95;
+            const contains95 = (truePopMean >= ci95Lower && truePopMean <= ci95Upper);
+
+            const margin99 = 2.576 * standardError;
+            const ci99Lower = Math.max(0, currentSampleMean - margin99);
+            const ci99Upper = currentSampleMean + margin99;
+            const contains99 = (truePopMean >= ci99Lower && truePopMean <= ci99Upper);
+
+            const error = Math.abs(truePopMean - currentSampleMean);
+            const errorRate = (error / truePopMean) * 100;
+
+            const rate95 = historyData.totalRuns > 0 
+                ? (historyData.success95Count / historyData.totalRuns * 100).toFixed(1) 
+                : '0.0';
+            const rate99 = historyData.totalRuns > 0 
+                ? (historyData.success99Count / historyData.totalRuns * 100).toFixed(1) 
+                : '0.0';
+
+            // 통계적 매개변수를 분석하여 즉각적인 진단 메시지(인사이트)를 생성한다.
+            let insightText = '';
+            if (sampleSize < 100) {
+                insightText = `표본 크기(n = ${sampleSize})가 상대적으로 작기 때문에 표준오차(SE = ${Math.round(standardError).toLocaleString()}원)가 다소 높게 계산되었습니다. 이에 따라 신뢰구간의 추정 대역폭이 비정밀하게 퍼져 정밀도가 낮습니다. 정밀한 조사를 위해서는 표본의 수를 늘려 오차 한계를 좁혀야 합니다.`;
+            } else if (sampleSize >= 300) {
+                insightText = `표본 크기(n = ${sampleSize})가 대규모로 확보되어 표준오차(SE = ${Math.round(standardError).toLocaleString()}원)가 안정적으로 최소화되었습니다. 표본 평균 주변에 모평균 참값이 존재할 확률을 매우 조밀한 신뢰구간 내로 압축하여 높은 정밀도의 추정이 실현되었습니다.`;
+            } else {
+                insightText = `표본 크기(n = ${sampleSize})가 적정한 표준 크기를 이루고 있어 표준오차(SE = ${Math.round(standardError).toLocaleString()}원) 역시 합리적인 제어 범위 내에 머무르고 있습니다. 전형적인 중심극한정리의 표집 양상을 보여줍니다.`;
+            }
+
+            if (selected.length < 3) {
+                insightText += ` 또한 일부 특정 권역(${regionNames})으로 제한하여 표본을 추출했으므로, 전국 혼합 오차가 배제되어 표본 표준편차(s = ${Math.round(currentSampleSD).toLocaleString()}원)가 다소 낮고 균일하게 형성되었습니다.`;
+            } else if (selected.length === regionalData.length) {
+                insightText += ` 전국 모든 행정 권역을 포함한 표집 틀을 활용하여 각지의 다양한 소비 경향이 균형 있게 융합되었고, 모집단의 본질적 표준편차(σ = ${Math.round(truePopSD).toLocaleString()}원)에 근접한 실제적인 변동성이 표본에 재현되었습니다.`;
+            }
+
+            container.innerHTML = `
+                <div style="margin-bottom: 0.8rem;">
+                    <strong>[추정 환경 개요]</strong><br>
+                    지정된 표집 틀 내 참값 모평균(&mu;)은 <strong>${Math.round(truePopMean).toLocaleString()}원</strong>이며, 현재 추출된 표본평균(x̄)은 <strong>${Math.round(currentSampleMean).toLocaleString()}원</strong>입니다. 
+                    추출 오차는 <strong>${Math.round(error).toLocaleString()}원</strong>으로, 오차율은 <strong>${errorRate.toFixed(2)}%</strong>를 가리킵니다.
+                </div>
+                <div style="margin-bottom: 0.8rem;">
+                    <strong>[신뢰구간 추정 결과]</strong><br>
+                    95% 신뢰구간은 <strong>[${Math.round(ci95Lower).toLocaleString()}원 ~ ${Math.round(ci95Upper).toLocaleString()}원]</strong> 범위로 정형화되었으며, 본 추출 구간 내에 모집단 참값(&mu;)이 <strong>${contains95 ? '<span style="color:var(--success); font-weight:bold;">포함되어 추정에 성공</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않아 추정에 실패</span>'}</strong>했습니다.<br>
+                    99% 신뢰구간은 <strong>[${Math.round(ci99Lower).toLocaleString()}원 ~ ${Math.round(ci99Upper).toLocaleString()}원]</strong> 범위이며, 참값(&mu;)이 <strong>${contains99 ? '<span style="color:var(--success); font-weight:bold;">포함됨</span>' : '<span style="color:var(--danger); font-weight:bold;">포함되지 않음</span>'}</strong>으로 나타났습니다.
+                </div>
+                <div>
+                    <strong>[통계적 인사이트 분석]</strong><br>
+                    시뮬레이션 누적 <strong>${historyData.totalRuns}회</strong> 기준으로 95% 신뢰구간의 실제 참값 포함 확률은 <strong>${rate95}%</strong>, 99% 신뢰구간의 실제 포함 비율은 <strong>${rate99}%</strong>입니다. ${insightText}
+                </div>
+            `;
+        }
+
+        // ============================================================================
+        // 🎵 2. Web Audio API 기반 지브리 풍 음악 생성 시스템 (Generative Music Box)
+        // ============================================================================
+        let audioCtx = null;
+        let isPlayingMusic = false;
+        let musicTimer = null;
+        let currentStep = 0;
+        let nextNoteTime = 0;
+        let delayNode = null;
+        let masterGain = null;
+
+        // 조 히사이시 스타일의 서정적이고 아련한 C/F 메이저 펜타토닉 멜로디 루프 시퀀스
+        const melodyNotes = [
+            64, 67, 69, 72, 76, 72, 69, 67, // Bar 1: E5 - G5 - A5 - C6 - E6 - C6 - A5 - G5
+            69, 72, 74, 76, 79, 76, 74, 72, // Bar 2: A5 - C6 - D6 - E6 - G6 - E6 - D6 - C6
+            76, 79, 81, 84, 81, 79, 76, 72, // Bar 3: E6 - G6 - A6 - C7 - A6 - G6 - E6 - C6
+            74, 76, 79, 74, 76, 72, null, null // Bar 4: D6 - E6 - G6 - D6 - E6 - C6 (쉼표)
+        ];
+
+        // 아스팔트 바닥 위 흩날리는 벚꽃잎처럼 부드럽게 받쳐주는 지브리 코드 진행 (Fmaj7 - Em7 - Am7 - Dm7)
+        const chordRoots = [41, 40, 45, 38]; // F2 - E2 - A2 - D2 (MIDI)
+        const chords = [
+            [57, 60, 64], // Fmaj7 (A3, C4, E4)
+            [55, 59, 62], // Em7 (G3, B3, D4)
+            [57, 60, 64], // Am7 (A3, C4, E4)
+            [53, 57, 60]  // Dm7 (F3, A3, C4)
+        ];
+
+        // 오디오 컨텍스트 및 꿈결 같은 에코 딜레이 루프 노드 활성화
+        function initAudio() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
+            masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            
+            // 음악 상자(Music Box)의 풍성하고 아련한 공명을 표현하기 위한 딜레이 노드 설계
+            delayNode = audioCtx.createDelay(1.0);
+            delayNode.delayTime.setValueAtTime(0.4, audioCtx.currentTime);
+            
+            const feedback = audioCtx.createGain();
+            feedback.gain.setValueAtTime(0.35, audioCtx.currentTime);
+            
+            // 딜레이 출력 신호를 피드백 노드를 거쳐 다시 입력으로 순환
+            delayNode.connect(feedback);
+            feedback.connect(delayNode);
+            
+            // 최종 출력을 오디오 출력선에 연결
+            delayNode.connect(masterGain);
+            masterGain.connect(audioCtx.destination);
+        }
+
+        // 특정 주파수와 볼륨 포인트를 소리 내어주는 모노 신디사이저 엔진
+        function playNodeSound(freq, startTime, duration, type = 'triangle', volume = 0.08) {
+            if (!audioCtx) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, startTime);
+            
+            // 지브리 멜로디의 몽글한 음색을 위해 고주파 배음을 커트해주는 로우패스 필터링
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(type === 'sine' ? 350 : 750, startTime);
+            
+            // 부드러운 시작(Attack)과 아련한 잔향(Release)을 그리는 볼륨 엔벨로프 곡선
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.04);
+            gainNode.gain.setValueAtTime(volume, startTime + duration - 0.08);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.connect(filter);
+            filter.connect(gainNode);
+            
+            // 딜레이 노드로 연결하여 공간감을 얹고, 다이렉트 신호를 masterGain에도 병렬 라우팅
+            gainNode.connect(delayNode);
+            gainNode.connect(masterGain);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        // Web Audio API 오디오 스케줄링 전용 타이머 루프
+        function musicScheduler() {
+            if (!isPlayingMusic) return;
+            
+            while (nextNoteTime < audioCtx.currentTime + 0.1) {
+                scheduleMusicStep(currentStep, nextNoteTime);
+                
+                // 300ms 간격으로 비트를 순방향 이동
+                nextNoteTime += 0.3;
+                currentStep++;
+            }
+            musicTimer = setTimeout(musicScheduler, 25);
+        }
+
+        // 매 단계마다 멜로디와 어쿠스틱 반주 음들을 조합하여 실시간 연주를 생성
+        function scheduleMusicStep(step, time) {
+            const chordIdx = Math.floor(step / 8) % 4;
+            const stepInChord = step % 8;
+            
+            // 1. 코드 마디 첫 박자에 묵직하고 따스한 근음(Base) 연출
+            if (stepInChord === 0) {
+                const bassFreq = 440 * Math.pow(2, (chordRoots[chordIdx] - 69) / 12);
+                playNodeSound(bassFreq, time, 2.2, 'sine', 0.12);
+            }
+            
+            // 2. 부드럽게 반주 화음을 아르페지오로 분산 연주
+            if (stepInChord % 2 === 0) {
+                const noteIdx = (stepInChord / 2) % 3;
+                const midiNote = chords[chordIdx][noteIdx];
+                const arpeggioFreq = 440 * Math.pow(2, (midiNote - 69) / 12);
+                playNodeSound(arpeggioFreq, time, 0.7, 'sine', 0.04);
+            }
+            
+            // 3. 서정적이고 아련한 지브리 스타일 멜로디 전개
+            const melodyIdx = step % melodyNotes.length;
+            const melodyMidi = melodyNotes[melodyIdx];
+            if (melodyMidi !== null) {
+                const melodyFreq = 440 * Math.pow(2, (melodyMidi - 69) / 12);
+                playNodeSound(melodyFreq, time, 0.45, 'triangle', 0.08);
+            }
+        }
+
+        // 음악 재생 상태를 반전 제어하는 이벤트 리스너
+        function toggleMusic() {
+            const btn = document.getElementById('musicToggleBtn');
+            if (!isPlayingMusic) {
+                if (!audioCtx) {
+                    initAudio();
+                }
+                audioCtx.resume();
+                isPlayingMusic = true;
+                btn.innerHTML = `<span class="no-select-emoji">🔇</span> 음악 끄기`;
+                btn.classList.add('active');
+                
+                nextNoteTime = audioCtx.currentTime + 0.05;
+                currentStep = 0;
+                musicScheduler();
+            } else {
+                isPlayingMusic = false;
+                btn.innerHTML = `<span class="no-select-emoji">🎵</span> 음악 켜기`;
+                btn.classList.remove('active');
+                if (musicTimer) {
+                    clearTimeout(musicTimer);
+                    musicTimer = null;
+                }
+                if (audioCtx) {
+                    audioCtx.suspend();
+                }
+            }
         }
 
         // Chart Initialization
@@ -1872,6 +2123,79 @@
                     }
                 }
             });
+
+            // ============================================================================
+            // 📉 Chart 4: 대수의 법칙 수렴도 그래프 초기화
+            // ============================================================================
+            const ctx4 = document.getElementById('convergenceChart').getContext('2d');
+            convergenceChart = new Chart(ctx4, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '누적 표본평균의 평균 (x̄_cum)',
+                            data: [],
+                            borderColor: '#FF4D6D',
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        },
+                        {
+                            label: '모평균 참값 (μ)',
+                            data: [],
+                            borderColor: '#B38646',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: '누적 시행 횟수 (N)',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '소비액 (원)',
+                                color: '#5C474C',
+                                font: { family: 'Presentation', weight: 'bold' }
+                            },
+                            ticks: {
+                                color: '#5C474C',
+                                font: { family: 'Presentation' }
+                            },
+                            grid: { color: 'rgba(255, 202, 211, 0.15)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: 'Presentation', size: 12, weight: 'bold' },
+                                color: '#423035'
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: { family: 'Presentation' }
+                        }
+                    }
+                }
+            });
         }
 
         // Update visual representations of all charts
@@ -1966,6 +2290,21 @@
             regionalChart.data.datasets[2].data = sampleMeanLine;
             
             regionalChart.update('none');
+
+            // 4. Update Convergence Chart (Chart 4)
+            // 최근 100회 동안의 수렴 추이를 꺾은선 그래프로 도식화한다.
+            if (convergenceChart) {
+                const recentConvergenceRuns = historyData.runs.slice(-100);
+                const convLabels = recentConvergenceRuns.map(run => `${run.id}회`);
+                const convData = recentConvergenceRuns.map(run => run.cumulativeMean);
+                const convPopMeans = recentConvergenceRuns.map(run => run.popMean);
+
+                convergenceChart.data.labels = convLabels;
+                convergenceChart.data.datasets[0].data = convData;
+                convergenceChart.data.datasets[1].data = convPopMeans;
+                
+                convergenceChart.update('none');
+            }
         }
 
         // --- Easter Egg Logic: Cherry Blossom Snow Rain and Gacha Machine ---
