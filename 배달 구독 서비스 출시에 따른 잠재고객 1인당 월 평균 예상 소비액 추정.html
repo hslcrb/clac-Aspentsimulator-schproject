@@ -1272,7 +1272,7 @@
             <span class="logo-emoji no-select-emoji" id="logoEmoji" onclick="handleLogoClick()">🌸</span>
             <div class="title-container">
                 <h1 onclick="handleTitleClick()">잠재고객 1인당 월 평균 예상 소비액 추정</h1>
-                <span class="subtitle">배달 구독 서비스 출시에 따른 고교 확률과 통계 시뮬레이터</span>
+                <span class="subtitle">배달 구독 서비스 출시에 따른 확률과 통계 시뮬레이터</span>
             </div>
         </div>
         <div class="header-right" style="display: flex; align-items: center; gap: 0.8rem;">
@@ -1337,7 +1337,7 @@
                     </button>
                     <button class="btn-primary" onclick="drawMultipleSamples(100)"
                         style="margin: 0; padding: 0.6rem 0.4rem; font-size: 0.95rem; background: var(--pink-600);">
-                        연속 추출 (100회)
+                        한번에 100하기
                     </button>
                 </div>
 
@@ -1354,7 +1354,7 @@
                         <span>자동 추출 주기 (초)</span>
                         <span class="input-badge" id="autoSpeedDisplay">1.0s</span>
                     </div>
-                    <input type="range" id="autoSpeedSlider" min="0.2" max="3.0" step="0.1" value="1.0"
+                    <input type="range" id="autoSpeedSlider" min="0.1" max="3.0" step="0.1" value="1.0"
                         oninput="updateAutoSpeed(this.value)">
                 </div>
 
@@ -2047,7 +2047,6 @@
                             ${sizeInsight}<br>${ageInsight}
                         </div>
                     </div>
-
                 </div>
             `;
         }
@@ -2119,9 +2118,13 @@
             filter.frequency.setValueAtTime(type === 'sine' ? 350 : 750, startTime);
 
             // 부드러운 시작(Attack)과 아련한 잔향(Release)을 그리는 볼륨 엔벨로프 곡선
+            // 단음(예: 트로트의 빠른 노트) 재생 시 시간 대역 충돌을 막기 위해 비례적 봉우리 시간을 적용한다.
+            const attackTime = Math.min(0.04, duration * 0.25);
+            const decayTime = Math.min(0.08, duration * 0.5);
+
             gainNode.gain.setValueAtTime(0, startTime);
-            gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.04);
-            gainNode.gain.setValueAtTime(volume, startTime + duration - 0.08);
+            gainNode.gain.linearRampToValueAtTime(volume, startTime + attackTime);
+            gainNode.gain.setValueAtTime(volume, startTime + duration - decayTime);
             gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
             osc.connect(filter);
@@ -2263,6 +2266,54 @@
             if (rhythmPattern[step % 16] === 0) return null;
 
             return midiNote;
+        }
+
+        // ============================================================================
+        // 음악 선택 및 정지 제어 함수
+        // selectMusic: AudioContext 재개(resume) Promise를 완전히 이행한 뒤에만 스케줄러를
+        // 가동하여 브라우저 자동재생 정책(Autoplay Policy)의 블로킹을 완전 회피한다.
+        // ============================================================================
+        function selectMusic(type) {
+            musicType = type;
+
+            // 최초 호출 시 AudioContext를 생성한다.
+            if (!audioCtx) initAudio();
+
+            // UI 버튼 활성화 표시
+            const btnGhibli = document.getElementById('musicBtnGhibli');
+            const btnTrot   = document.getElementById('musicBtnTrot');
+            if (type === 'ghibli') {
+                btnGhibli.style.background = 'var(--pink-500)'; btnGhibli.style.color = 'white';
+                btnTrot.style.background   = 'white';           btnTrot.style.color   = 'var(--pink-600)';
+            } else {
+                btnTrot.style.background   = 'var(--pink-500)'; btnTrot.style.color   = 'white';
+                btnGhibli.style.background = 'white';           btnGhibli.style.color = 'var(--pink-600)';
+            }
+
+            // 이전에 실행 중이던 스케줄러가 있으면 먼저 정리한다.
+            if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+            isPlayingMusic = true;
+
+            // resume()은 Promise를 반환하며, 사용자 제스처 이후 항상 resolved 된다.
+            // .then() 안에서 스케줄러를 기동해야 AudioContext가 running 상태임을 보장한다.
+            audioCtx.resume().then(() => {
+                if (!isPlayingMusic) return; // 사용자가 resume 사이에 정지를 눌렀을 경우 방어
+                nextNoteTime = audioCtx.currentTime + 0.05;
+                currentStep  = 0;
+                musicScheduler();
+            });
+        }
+
+        // 음악을 즉시 정지하고 AudioContext를 suspend 상태로 전환한다.
+        function stopMusic() {
+            isPlayingMusic = false;
+            if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+            if (audioCtx)   audioCtx.suspend();
+
+            const btnGhibli = document.getElementById('musicBtnGhibli');
+            const btnTrot   = document.getElementById('musicBtnTrot');
+            if (btnGhibli) { btnGhibli.style.background = 'white'; btnGhibli.style.color = 'var(--pink-600)'; }
+            if (btnTrot)   { btnTrot.style.background   = 'white'; btnTrot.style.color   = 'var(--pink-600)'; }
         }
 
         // 스플래시 화면 타이핑 및 도트 루프 애니메이션 재생 함수
