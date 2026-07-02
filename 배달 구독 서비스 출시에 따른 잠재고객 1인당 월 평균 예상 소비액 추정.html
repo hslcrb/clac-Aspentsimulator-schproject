@@ -32,6 +32,20 @@
 
     <!-- Vanilla CSS Styling -->
     <style>
+        html {
+            font-size: 300%;
+        }
+
+        /* Disable text selection and drag on emojis */
+        .no-select-emoji {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-drag: none;
+            display: inline-block;
+        }
+
         :root {
             /* Palette: Premium Pink & Rose Gold */
             --pink-50: #FFF5F6;
@@ -133,7 +147,6 @@
 
         .logo-emoji {
             font-size: 2.2rem;
-            animation: bounce 3s infinite ease-in-out;
             cursor: pointer;
             user-select: none;
         }
@@ -191,9 +204,9 @@
         /* Main Layout */
         .dashboard-container {
             display: grid;
-            grid-template-columns: 360px 1fr;
+            grid-template-columns: 22.5rem 1fr;
             gap: 1.5rem;
-            max-width: 1600px;
+            max-width: 100rem;
             width: 100%;
             margin: 1.5rem auto;
             padding: 0 1.5rem 3rem 1.5rem;
@@ -473,30 +486,32 @@
         }
 
         .metric-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 245, 246, 0.9) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 240, 243, 0.95) 100%);
             border-radius: var(--radius-md);
             padding: 1.2rem;
-            border: 1px solid var(--pink-100);
+            border: 1px solid rgba(255, 62, 108, 0.2);
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--pink-400);
+        .metric-card:hover {
+            border-color: var(--pink-400);
+            box-shadow: var(--shadow-md);
         }
 
-        .metric-card.accent::before {
-            background: linear-gradient(to bottom, var(--gold-400), var(--gold-600));
+        .metric-card.accent {
+            background: linear-gradient(135deg, rgba(255, 253, 250, 0.98) 0%, rgba(249, 229, 201, 0.4) 100%);
+            border: 1px solid rgba(223, 177, 117, 0.5);
+        }
+
+        .metric-card.accent:hover {
+            border-color: var(--gold-400);
+            box-shadow: var(--shadow-md);
         }
 
         .metric-title {
@@ -577,7 +592,7 @@
 
         .chart-container {
             position: relative;
-            height: 320px;
+            height: 20rem;
             width: 100%;
         }
 
@@ -687,40 +702,40 @@
 
         /* Visual representation of a Gacha */
         .gacha-illustration {
-            width: 140px;
-            height: 200px;
+            width: 8.75rem;
+            height: 12.5rem;
             background: linear-gradient(135deg, var(--pink-300) 0%, var(--pink-500) 100%);
-            border-radius: 70px 70px 20px 20px;
+            border-radius: 4.375rem 4.375rem 1.25rem 1.25rem;
             position: relative;
-            border: 4px solid var(--slate-900);
+            border: 0.25rem solid var(--slate-900);
             box-shadow: var(--shadow-md);
             overflow: visible;
         }
 
         .gacha-glass {
-            width: 110px;
-            height: 100px;
+            width: 6.875rem;
+            height: 6.25rem;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             position: absolute;
-            top: 15px;
-            left: 11px;
-            border: 3px solid var(--slate-900);
+            top: 0.9375rem;
+            left: 0.6875rem;
+            border: 0.1875rem solid var(--slate-900);
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             align-content: center;
-            gap: 4px;
-            padding: 5px;
+            gap: 0.25rem;
+            padding: 0.3125rem;
         }
 
         .gacha-ball {
-            width: 18px;
-            height: 18px;
+            width: 1.125rem;
+            height: 1.125rem;
             border-radius: 50%;
-            border: 1px solid var(--slate-900);
-            box-shadow: inset -2px -2px 3px rgba(0,0,0,0.2);
+            border: 0.0625rem solid var(--slate-900);
+            box-shadow: inset -0.125rem -0.125rem 0.1875rem rgba(0,0,0,0.2);
         }
 
         .ball-pink { background-color: #FF7088; }
@@ -729,14 +744,14 @@
         .ball-gold { background-color: #FFD700; animation: pulseGold 1.5s infinite; }
 
         .gacha-crank {
-            width: 40px;
-            height: 40px;
+            width: 2.5rem;
+            height: 2.5rem;
             background-color: var(--slate-200);
-            border: 3px solid var(--slate-900);
+            border: 0.1875rem solid var(--slate-900);
             border-radius: 50%;
             position: absolute;
-            bottom: 45px;
-            left: calc(50% - 20px);
+            bottom: 2.8125rem;
+            left: calc(50% - 1.25rem);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -745,30 +760,30 @@
         }
 
         .crank-handle {
-            width: 25px;
-            height: 8px;
+            width: 1.5625rem;
+            height: 0.5rem;
             background-color: var(--slate-800);
-            border-radius: 4px;
+            border-radius: 0.25rem;
         }
 
         .gacha-chute {
-            width: 35px;
-            height: 25px;
+            width: 2.1875rem;
+            height: 1.5625rem;
             background-color: var(--slate-900);
-            border-radius: 8px 8px 0 0;
+            border-radius: 0.5rem 0.5rem 0 0;
             position: absolute;
-            bottom: 5px;
-            left: calc(50% - 17.5px);
+            bottom: 0.3125rem;
+            left: calc(50% - 1.09375rem);
         }
 
         .capsule-drop {
-            width: 24px;
-            height: 24px;
+            width: 1.5rem;
+            height: 1.5rem;
             border-radius: 50%;
-            border: 2px solid var(--slate-900);
+            border: 0.125rem solid var(--slate-900);
             position: absolute;
-            bottom: -5px;
-            left: calc(50% - 12px);
+            bottom: -0.3125rem;
+            left: calc(50% - 0.75rem);
             background: linear-gradient(to bottom, #FFD700 50%, white 50%);
             display: none;
             animation: bounceIn 0.5s ease-out forwards;
@@ -1018,15 +1033,7 @@
 
         .footer-heart {
             color: var(--pink-500);
-            animation: heartBeat 1.2s infinite;
             display: inline-block;
-        }
-
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            25% { transform: scale(1.15); }
-            40% { transform: scale(1.05); }
-            60% { transform: scale(1.2); }
         }
     </style>
 </head>
@@ -1038,7 +1045,7 @@
     <!-- Header Section -->
     <header>
         <div class="header-left">
-            <span class="logo-emoji" id="logoEmoji" onclick="handleLogoClick()">🌸</span>
+            <span class="logo-emoji no-select-emoji" id="logoEmoji" onclick="handleLogoClick()">🌸</span>
             <div class="title-container">
                 <h1 onclick="handleTitleClick()">잠재고객 1인당 월 평균 예상 소비액 추정</h1>
                 <span class="subtitle">배달 구독 서비스 출시에 따른 고교 확률과 통계 시뮬레이터</span>
@@ -1046,7 +1053,7 @@
         </div>
         <div class="header-right">
             <span class="tag">모평균의 신뢰구간 추정</span>
-            <button class="easter-egg-btn" onclick="triggerEasterEgg()" title="비밀의 벚꽃 비 내리기">🌸</button>
+            <button class="easter-egg-btn no-select-emoji" onclick="triggerEasterEgg()" title="비밀의 벚꽃 비 내리기">🌸</button>
         </div>
     </header>
 
@@ -1056,7 +1063,7 @@
         <section class="sidebar">
             <!-- Region Selector Card -->
             <div class="card">
-                <h2 class="card-title">📍 표집 틀 설정 (지역 선택)</h2>
+                <h2 class="card-title"><span class="no-select-emoji">📍</span> 표집 틀 설정 (지역 선택)</h2>
                 <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                     특정 지역만 제한하거나 전국 단위로 표집 틀(Sampling Frame)을 조정하여 지역별 혼합 오차 효과를 제어합니다.
                 </p>
@@ -1068,7 +1075,7 @@
 
             <!-- Sampling Size Slider Card -->
             <div class="card">
-                <h2 class="card-title">⚙️ 표본 추출 조건</h2>
+                <h2 class="card-title"><span class="no-select-emoji">⚙️</span> 표본 추출 조건</h2>
                 
                 <div class="form-group">
                     <div class="form-label">
@@ -1079,11 +1086,11 @@
                 </div>
 
                 <button class="btn-primary" onclick="drawNewSample()">
-                    <span>🎲</span> 표본 추출 (Sample)
+                    <span class="no-select-emoji">🎲</span> 표본 추출 (Sample)
                 </button>
 
                 <div class="toggle-group">
-                    <span class="toggle-label">🔄 자동 연속 추출</span>
+                    <span class="toggle-label"><span class="no-select-emoji">🔄</span> 자동 연속 추출</span>
                     <label class="switch">
                         <input type="checkbox" id="autoDrawToggle" onchange="toggleAutoDraw()">
                         <span class="slider"></span>
@@ -1099,7 +1106,7 @@
                 </div>
 
                 <button class="btn-secondary" onclick="resetHistory()">
-                    <span>🧹</span> 시뮬레이션 이력 초기화
+                    <span class="no-select-emoji">🧹</span> 시뮬레이션 이력 초기화
                 </button>
             </div>
         </section>
@@ -1179,7 +1186,7 @@
             <div class="charts-row-top">
                 <!-- Chart 1: Distributions -->
                 <div class="card">
-                    <h3 class="card-title">📊 표본 분포 vs 모집단 분포</h3>
+                    <h3 class="card-title"><span class="no-select-emoji">📊</span> 표본 분포 vs 모집단 분포</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         추출된 표본의 상대도수 히스토그램과 선택된 지역들의 참값 밀도 함수를 겹쳐 그립니다.
                     </p>
@@ -1190,7 +1197,7 @@
 
                 <!-- Chart 2: CI History -->
                 <div class="card">
-                    <h3 class="card-title">📈 신뢰구간 추정 역사 (최근 30회)</h3>
+                    <h3 class="card-title"><span class="no-select-emoji">📈</span> 신뢰구간 추정 역사 (최근 30회)</h3>
                     <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                         각 추출에서의 95% 신뢰구간 범위를 표시합니다. 세로선은 참 모평균(μ)을 나타내며, 참값을 포함하지 못한 구간은 <span style="color: var(--danger); font-weight: bold;">빨간색</span>으로 표시됩니다.
                     </p>
@@ -1202,7 +1209,7 @@
 
             <!-- Chart 3: Regional analysis -->
             <div class="card">
-                <h3 class="card-title">🗺️ 선택 지역별 참값 평균 vs 현재 표본 평균 비교</h3>
+                <h3 class="card-title"><span class="no-select-emoji">🗺️</span> 선택 지역별 참값 평균 vs 현재 표본 평균 비교</h3>
                 <p style="font-size: 0.8rem; color: var(--slate-700); margin-bottom: 0.8rem;">
                     개별 지역의 실제 모평균들과 전체 선택 집단의 가중 모평균, 그리고 이번 회차에 추출된 표본 평균을 비교해봅니다.
                 </p>
@@ -1215,16 +1222,16 @@
 
     <!-- Footer -->
     <footer>
-        <span>배달 구독 서비스 소비자 선호도 조사 시뮬레이터</span>
+        <span>Hayeon <span class="no-select-emoji">🌸</span></span>
         <span>•</span>
-        <span>Made with <span class="footer-heart">🌸</span> for Statistics Education</span>
+        <span>Made with <span class="footer-heart no-select-emoji">🌸</span> for Statistics Education</span>
     </footer>
 
     <!-- Gacha Easter Egg Modal -->
     <div class="modal-overlay" id="gachaModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeGachaModal()">×</button>
-            <h2 class="gacha-title">🌸 비밀의 벚꽃 뽑기 머신 🌸</h2>
+            <h2 class="gacha-title"><span class="no-select-emoji">🌸</span> 비밀의 벚꽃 뽑기 머신 <span class="no-select-emoji">🌸</span></h2>
             <p style="font-size: 0.85rem; color: var(--slate-700); text-align: center; margin-top: 0.4rem; padding: 0 1rem;">
                 통계적 행운을 테스트해보세요! 레버를 누르면 무작위 크기의 표본을 뽑아 참값과의 거리를 측정하고 오늘의 통계 행운을 점쳐줍니다.
             </p>
@@ -1603,6 +1610,10 @@
 
         // Chart Initialization
         function initCharts() {
+            // Set Chart.js fonts to match x3 scale
+            Chart.defaults.font.size = 36;
+            Chart.defaults.font.family = 'Presentation';
+
             // Chart 1: Distribution (Histogram of sample + True Pop PDF)
             const ctx1 = document.getElementById('distributionChart').getContext('2d');
             distributionChart = new Chart(ctx1, {
@@ -1685,7 +1696,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                font: { family: 'Presentation', size: 11, weight: 'bold' },
+                                font: { family: 'Presentation', size: 33, weight: 'bold' },
                                 color: '#423035'
                             }
                         },
@@ -1769,7 +1780,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                font: { family: 'Presentation', size: 11, weight: 'bold' },
+                                font: { family: 'Presentation', size: 33, weight: 'bold' },
                                 color: '#423035'
                             }
                         },
@@ -1856,7 +1867,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                font: { family: 'Presentation', size: 10, weight: 'bold' },
+                                font: { family: 'Presentation', size: 30, weight: 'bold' },
                                 color: '#423035'
                             }
                         },
@@ -1967,6 +1978,28 @@
         let blossomCtx = null;
         let blossomPetals = [];
         let blossomAnimationId = null;
+        let petalHtmlImage = null;
+
+        // Custom HTML-in-Canvas SVG pre-rendering
+        function initPetalImage() {
+            if (petalHtmlImage) return;
+            const htmlContent = `
+              <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+                <foreignObject width="100%" height="100%">
+                  <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; justify-content: center; align-items: center; width: 64px; height: 64px;">
+                    <div style="width: 24px; height: 32px; background-color: #FFB7C5; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; transform: rotate(-15deg); box-shadow: inset -2px -2px 5px rgba(255,255,255,0.4); border: 1px solid rgba(255, 112, 136, 0.4);"></div>
+                  </div>
+                </foreignObject>
+              </svg>`;
+
+            const svgBlob = new Blob([htmlContent], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            petalHtmlImage = new Image();
+            petalHtmlImage.onload = function() {
+                URL.revokeObjectURL(url);
+            };
+            petalHtmlImage.src = url;
+        }
 
         class Petal {
             constructor() {
@@ -1997,25 +2030,22 @@
             }
 
             draw() {
+                if (!petalHtmlImage || !petalHtmlImage.complete) return;
                 blossomCtx.save();
                 blossomCtx.translate(this.x, this.y);
                 blossomCtx.rotate(this.angle * Math.PI / 180);
                 blossomCtx.globalAlpha = this.opacity;
                 
-                // Draw petal using path
-                blossomCtx.beginPath();
-                blossomCtx.fillStyle = '#FFB7C5';
-                // Cute asymmetrical petal curve
-                blossomCtx.moveTo(0, 0);
-                blossomCtx.quadraticCurveTo(-this.size, -this.size/2, -this.size/2, -this.size);
-                blossomCtx.quadraticCurveTo(0, -this.size * 1.2, this.size/2, -this.size);
-                blossomCtx.quadraticCurveTo(this.size, -this.size/2, 0, 0);
-                blossomCtx.fill();
+                // Draw HTML-inside-Canvas pre-rendered SVG Image
+                blossomCtx.drawImage(petalHtmlImage, -this.size, -this.size, this.size * 2, this.size * 2);
                 blossomCtx.restore();
             }
         }
 
         function triggerEasterEgg() {
+            // Pre-render the HTML petal to Image
+            initPetalImage();
+
             blossomCanvas = document.getElementById('blossomCanvas');
             blossomCtx = blossomCanvas.getContext('2d');
             blossomCanvas.style.display = 'block';
